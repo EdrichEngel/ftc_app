@@ -122,11 +122,18 @@ public class TeleOp extends OpMode {
             LeftArm.setPosition(0.3);
         }
 
+
+        if (gamepad2.y) {
+
+            RightArm.setPosition(0.55);
+            LeftArm.setPosition(0.45);
+        }
+
         if (gamepad2.dpad_left){
             RelicClaw.setPosition(0);
         }
         if (gamepad2.dpad_right){
-            RelicClaw.setPosition(0.5);
+            RelicClaw.setPosition(0.3);
         }
 
         while (gamepad2.right_bumper == true){
@@ -136,8 +143,8 @@ public class TeleOp extends OpMode {
 
 
 
-        Extending.setPower(gamepad2.right_stick_y);
-        Arm.setPower(gamepad2.left_stick_y*-0.5);
+        Extending.setPower(gamepad2.left_stick_y);
+        Arm.setPower(gamepad2.right_stick_y*-0.5);
 
     }
 }

@@ -35,12 +35,14 @@ import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegister;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.ConceptNullOp;
+import org.firstinspires.ftc.teamcode.Main.AutoOpRed1;
 import org.firstinspires.ftc.teamcode.Main.TeleOp;
 
 /**
  * {@link FtcOpModeRegister} is responsible for registering opmodes for use in an FTC game.
  * @see #register(OpModeManager)
  */
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp
 public class FtcOpModeRegister implements OpModeRegister {
 
     /**
@@ -65,7 +67,7 @@ public class FtcOpModeRegister implements OpModeRegister {
     public void register(OpModeManager manager) {
 
         manager.register("TeleOp",                  TeleOp.class);
-
+        manager.register("AutoOp",                  AutoOpRed1.class);
         /**
          * Any manual OpMode class registrations should go here.
          */
