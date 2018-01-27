@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
-@Disabled
+//@Disabled
 public class Omni_Steering_Min extends OpMode {
 
     DcMotor DriveFrontLeft;

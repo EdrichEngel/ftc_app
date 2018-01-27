@@ -62,7 +62,7 @@ public class TeleOp extends OpMode {
     public void loop() {
 
         if (gamepad1.back){
-            SpeedControl = 0.5;
+            SpeedControl = 0.4;
         }
         if (gamepad1.start){
             SpeedControl = 1;
@@ -71,24 +71,24 @@ public class TeleOp extends OpMode {
         if ((gamepad1.left_bumper && gamepad1.right_bumper) == false)
         {
 
-            DriveFrontLeft.setPower(gamepad1.left_stick_y);
-            DriveFrontRight.setPower(gamepad1.right_stick_y);
-            DriveBackLeft.setPower(gamepad1.left_stick_y);
-            DriveBackRight.setPower(gamepad1.right_stick_y);
+            DriveFrontLeft.setPower(gamepad1.left_stick_y* SpeedControl);
+            DriveFrontRight.setPower(gamepad1.right_stick_y*SpeedControl);
+            DriveBackLeft.setPower(gamepad1.left_stick_y*SpeedControl);
+            DriveBackRight.setPower(gamepad1.right_stick_y*SpeedControl);
         }
         while (gamepad1.right_bumper) {
-            SpeedControl = gamepad1.right_stick_y;
-            DriveFrontLeft.setPower(1 * SpeedControl);
-            DriveFrontRight.setPower(-1 * SpeedControl);
-            DriveBackLeft.setPower(-1 * SpeedControl);
-            DriveBackRight.setPower(1 * SpeedControl);
+
+            DriveFrontLeft.setPower(1 );
+            DriveFrontRight.setPower(-1 );
+            DriveBackLeft.setPower(-1 );
+            DriveBackRight.setPower(1 );
         }
         while (gamepad1.left_bumper) {
-            SpeedControl = gamepad1.right_stick_y;
-            DriveFrontLeft.setPower(-1 * SpeedControl);
-            DriveFrontRight.setPower(1 * SpeedControl);
-            DriveBackLeft.setPower(1 * SpeedControl);
-            DriveBackRight.setPower(-1 * SpeedControl);
+
+            DriveFrontLeft.setPower(-1 );
+            DriveFrontRight.setPower(1);
+            DriveBackLeft.setPower(1 );
+            DriveBackRight.setPower(-1 );
 
         }
 
@@ -105,21 +105,27 @@ public class TeleOp extends OpMode {
 
 
 
-        if (gamepad2.dpad_left == true){
+        if (gamepad2.x){
 
             RightArm.setPosition(0.9);
             LeftArm.setPosition(0.1);
         }
-        if (gamepad2.dpad_right == true) {
+        if (gamepad2.b) {
 
             RightArm.setPosition(0.5);
             LeftArm.setPosition(0.5);
         }
 
-        if (gamepad2.x){
+        if (gamepad2.a) {
+
+            RightArm.setPosition(0.7);
+            LeftArm.setPosition(0.3);
+        }
+
+        if (gamepad2.dpad_left){
             RelicClaw.setPosition(0);
         }
-        if (gamepad2.b){
+        if (gamepad2.dpad_right){
             RelicClaw.setPosition(0.5);
         }
 
