@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
-//@Disabled
+@Disabled
 public class Omni_Steering_Min extends OpMode {
 
     DcMotor DriveFrontLeft;
@@ -13,11 +13,12 @@ public class Omni_Steering_Min extends OpMode {
     DcMotor DriveBackLeft;
     DcMotor DriveBackRight;
 
-    int Q = 0;
+
     double in_rad = 0;
     double vect_rad = 0;
     double vect_x = 0;
     double vect_y = 0;
+    double M = 1;
 
     boolean bumper = false;
     boolean stick = false;
@@ -77,19 +78,12 @@ public class Omni_Steering_Min extends OpMode {
         vect_y = Math.sin(vect_rad);
     }//<3
 
-      /*Minder compiler werk weergawe:
-      if (gameapad1.leftstick_x != 0) {vect_rad=Math.atan(gameapad1.leftstick_x/gameapad1.leftstick_y)-Math.PI/4;}
-         else if(gameapad1.leftstick_y>0){vect_rad=Math.PI/4}else {vect_rad=-Math.PI/(4/3)}
 
-         vect_x=Math.cos(vect_rad);
-         vect_y=Math.sin(vect_rad);
-       */
+//
+//    public void Update_Multiplier(){
+//
+//    }
 
-
-
-
-    //MM staan vir motor method
-    //PM staan vir power multiplier
     public void MM_Null() {
         DriveFrontRight.setPower(0);
         DriveFrontLeft.setPower(0);
@@ -99,6 +93,7 @@ public class Omni_Steering_Min extends OpMode {
 
     public void MM_Stick() {
         update_motor_vect();
+     /*   M = Math.sqrt((gamepad1.left_stick_x)*(gamepad1.left_stick_x)+(gamepad1.left_stick_y)*(gamepad1.left_stick_y));*/
 
         DriveFrontRight.setPower(vect_x);
         DriveFrontLeft.setPower(vect_y);
@@ -116,15 +111,6 @@ public class Omni_Steering_Min extends OpMode {
 
         if (stick == false) { MM_Null();}
         if (stick == true) { MM_Stick();}
-        telemetry.addData("in_x:", gamepad1.left_stick_x);
-        telemetry.addData("in_y:", gamepad1.left_stick_y);
-        telemetry.addData("in_rad:", in_rad);
-        telemetry.addData("vect_rad:", vect_rad);
-        telemetry.addData("cos:", vect_x);
-        telemetry.addData("sin:", vect_y);
-
-
-        telemetry.update();
 
 
     }
