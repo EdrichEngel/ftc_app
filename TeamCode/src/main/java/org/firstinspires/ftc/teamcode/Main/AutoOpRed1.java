@@ -83,7 +83,7 @@ public class AutoOpRed1 extends LinearOpMode
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
         parameters.vuforiaLicenseKey = "AUO3EHb/////AAAAGSI5YtsUZUnXmqs2hS+aWDczQOW35bYvHctTDIwu8Cri2uQQQMF806Y9y19+y/tRwcx7BcTtmonYebC+34yGbTFKEYk7WKScXsAsdkb0F+D36udYE0b4Y5ytuFgzFoimN7gLa4P2xhrgfuBjgBJtDIhVlDECMiQaASZBdrUUHPIDDLe8BLQ0Pqa/tj4D6L4Lr68Pwr/PR4JYov8NncvJtdG7WvDtJFY4fqRGWCoLPwvAkvmDUmoTRlovnpiyDpdn0mhaLIY7baSn0VspvIoxY8utZgjOpsOF3WJM88GVaijqus5p1j47aNFJtPOGYfwaSEjiHUbigyohkcsTAg65Bl2469QJNTScnuwk1jAWtXJj";
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
         this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
         VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
         VuforiaTrackable relicTemplate = relicTrackables.get(0);
@@ -92,13 +92,20 @@ public class AutoOpRed1 extends LinearOpMode
         telemetry.update();
         waitForStart();
         relicTrackables.activate();
-        AfterWaitForStart();
         mrGyro.resetZAxisIntegrator();
+        AfterWaitForStart();
+
+
 
 
         while (opModeIsActive()) {
 
-            while (VuforiaActive == 1) {
+            PillarsToBePassed = 4;
+            DriveGyroToRange(0.5);
+            stop();
+
+
+         /*   while (VuforiaActive == 1) {
                 RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
                 if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
                     telemetry.addData("VuMark", "%s visible", vuMark);
@@ -128,6 +135,7 @@ public class AutoOpRed1 extends LinearOpMode
             telemetry.addData("Right", "%s visible", VuRight);
             telemetry.update();
             VuLogic();
+            com.vuforia.CameraDevice.getInstance().setFlashTorchMode(false);
             GlyphPickUp();
             Jewel();
             Arm.setPosition(0.1);
@@ -135,14 +143,15 @@ public class AutoOpRed1 extends LinearOpMode
             DriveGyroToRange(0.3);
             PillarsToBePassed = 1;
             DriveGyroToRange(-0.05);
-            GyroTurn(-70,0.2);
-            Drive(400,0.1);
+            GyroTurn(-70, 0.2);
+            Drive(400, 0.1);
             DropGlyph();
-            Drive(-100,0.3);
+            Drive(-100, 0.3);
             stop();
-
+*/
         }
     }
+
 
     public void InitSystem() {
 
@@ -182,6 +191,7 @@ public class AutoOpRed1 extends LinearOpMode
         mrGyro.calibrate();
         Colour = "None";
         Pillars = 0;
+
     }
 
 
