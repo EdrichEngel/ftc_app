@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
-//@Disabled
+@Disabled
 
 public class Modular_TeleOp extends OpMode{
 

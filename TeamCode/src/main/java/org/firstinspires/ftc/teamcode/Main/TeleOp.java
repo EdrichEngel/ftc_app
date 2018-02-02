@@ -76,14 +76,14 @@ public class TeleOp extends OpMode {
             DriveBackLeft.setPower(gamepad1.left_stick_y*SpeedControl);
             DriveBackRight.setPower(gamepad1.right_stick_y*SpeedControl);
         }
-        while (gamepad1.right_bumper) {
+        while (gamepad1.left_bumper) {
 
             DriveFrontLeft.setPower(1 );
             DriveFrontRight.setPower(-1 );
             DriveBackLeft.setPower(-1 );
             DriveBackRight.setPower(1 );
         }
-        while (gamepad1.left_bumper) {
+        while (gamepad1.right_bumper) {
 
             DriveFrontLeft.setPower(-1 );
             DriveFrontRight.setPower(1);
@@ -122,11 +122,18 @@ public class TeleOp extends OpMode {
             LeftArm.setPosition(0.3);
         }
 
+
+        if (gamepad2.y) {
+
+            RightArm.setPosition(0.55);
+            LeftArm.setPosition(0.45);
+        }
+
         if (gamepad2.dpad_left){
             RelicClaw.setPosition(0);
         }
         if (gamepad2.dpad_right){
-            RelicClaw.setPosition(0.5);
+            RelicClaw.setPosition(0.2);
         }
 
         while (gamepad2.right_bumper == true){
@@ -136,8 +143,8 @@ public class TeleOp extends OpMode {
 
 
 
-        Extending.setPower(gamepad2.right_stick_y);
-        Arm.setPower(gamepad2.left_stick_y*-0.5);
+        Extending.setPower(gamepad2.left_stick_y);
+        Arm.setPower(gamepad2.right_stick_y*-0.5);
 
     }
 }
