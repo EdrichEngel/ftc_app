@@ -1,12 +1,9 @@
 package org.firstinspires.ftc.teamcode.Main;
 
 
-import android.opengl.GLU;
-
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -15,31 +12,24 @@ import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.I2cDevice;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchImpl;
-import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 /**
  * Created by Edrich on 9/23/2017.
  */
 
-@Autonomous(name = "Red1", group = "Red")
+@Autonomous(name = "Blue1", group = "Blue")
 //@Disabled
-public class AutoOpRed1 extends LinearOpMode
+public class AutoOpBlue1 extends LinearOpMode
 {
     DcMotor DriveFrontLeft;
     DcMotor DriveFrontRight;
@@ -98,11 +88,8 @@ public class AutoOpRed1 extends LinearOpMode
         AfterWaitForStart();
 
 
-
-
         while (opModeIsActive()) {
-
-
+/*
             while (VuforiaActive == 1) {
                 com.vuforia.CameraDevice.getInstance().setFlashTorchMode(true);
                 RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
@@ -126,16 +113,20 @@ public class AutoOpRed1 extends LinearOpMode
                 }
                 telemetry.update();
             }
+
+
             VuLogic();
             com.vuforia.CameraDevice.getInstance().setFlashTorchMode(false);
+  */
+            PillarsToBePassed = 3;
             GlyphPickUp();
             Jewel();
             Arm.setPosition(0.1);
             Thread.sleep(250);
-            DriveGyroToRange(0.3);
+            DriveGyroToRange(-0.3);
             PillarsToBePassed = 1;
-            DriveGyroToRange(-0.05);
-            GyroTurn(-70, 0.2);
+            DriveGyroToRange(0.1);
+            GyroTurn(-70,0.2);
             Drive(400, 0.1);
             DropGlyph();
             Drive(-100, 0.3);
@@ -143,6 +134,7 @@ public class AutoOpRed1 extends LinearOpMode
 
         }
     }
+
 
 
     public void InitSystem() {
@@ -330,7 +322,6 @@ public class AutoOpRed1 extends LinearOpMode
         if (Colour.matches("Red")){
             telemetry.addData("Red", "%s visible");
             telemetry.update();
-            //DriveForwardGyro(-300,-0.1);
             GyroTurn(-15,0.1);
             Thread.sleep(1000);
             GyroTurn(0,0.1);
@@ -338,7 +329,6 @@ public class AutoOpRed1 extends LinearOpMode
         if (Colour.matches("Blue")){
             telemetry.addData("Blue", "%s visible");
             telemetry.update();
-            //DriveForwardGyro(300,0.1);
             GyroTurn(15,0.1);
             Thread.sleep(1000);
             GyroTurn(0,0.1);
@@ -355,7 +345,7 @@ public class AutoOpRed1 extends LinearOpMode
 
     public void VuLogic(){
         if (VuLeft == true){
-            PillarsToBePassed = 3;
+            PillarsToBePassed = 1;
             telemetry.addData("Pillars to be passed:","3");
             telemetry.update();
         }
@@ -365,7 +355,7 @@ public class AutoOpRed1 extends LinearOpMode
             telemetry.update();
         }
         if (VuRight == true){
-            PillarsToBePassed = 1;
+            PillarsToBePassed = 3;
             telemetry.addData("Pillars to be passed:","1");
             telemetry.update();
         }
