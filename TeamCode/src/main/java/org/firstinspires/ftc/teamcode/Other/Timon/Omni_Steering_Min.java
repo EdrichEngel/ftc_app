@@ -40,37 +40,26 @@ public class Omni_Steering_Min extends OpMode {
     }
 
     public void update_stick_status() {
-        if (gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0) {
-            stick = true;
-        } else {
-            stick = false;
-        }
+        if (gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0) {stick = true;} else {stick = false;}
     }
 
     public void update_motor_vect() {
-//incase of x = 1
+//incase of x = 0
             if(gamepad1.left_stick_x == 0){
                 if (gamepad1.left_stick_y > 0)
                 {in_rad = Math.PI / 2;} else {in_rad = -Math.PI / 2;}
             }
-//incase of x = -1
+//incase of y = 0 and we need a direction
             else if(gamepad1.left_stick_y == 0){
                 if(gamepad1.left_stick_x > 0)
                 {in_rad = 0;} else {in_rad = Math.PI;}
             }
 
             else{
-
-/*
-        if(gamepad1.left_stick_y > 0 && gamepad1.left_stick_x > 0){Q = 1;}
-        if(gamepad1.left_stick_y > 0 && gamepad1.left_stick_x < 0){Q = 2;}
-        if(gamepad1.left_stick_y < 0 && gamepad1.left_stick_x < 0){Q = 3;}
-        if(gamepad1.left_stick_y < 0 && gamepad1.left_stick_x > 0){Q = 4;}
-*/
-        if ((gamepad1.left_stick_y > 0 && gamepad1.left_stick_x > 0) || (gamepad1.left_stick_y < 0 && gamepad1.left_stick_x > 0) )
-        {in_rad = Math.atan(gamepad1.left_stick_y / gamepad1.left_stick_x);}
-        else{in_rad = Math.PI + Math.atan(gamepad1.left_stick_y / gamepad1.left_stick_x);}
-            }
+                if (gamepad1.left_stick_x > 0)
+                    {in_rad = Math.atan(gamepad1.left_stick_y / gamepad1.left_stick_x);}
+                    else{in_rad = Math.PI + Math.atan(gamepad1.left_stick_y / gamepad1.left_stick_x);}
+                    }
 
 
         vect_rad = in_rad - Math.PI / 4;
@@ -79,10 +68,7 @@ public class Omni_Steering_Min extends OpMode {
     }//<3
 
 
-//
-//    public void Update_Multiplier(){
-//
-//    }
+
 
     public void MM_Null() {
         DriveFrontRight.setPower(0);
