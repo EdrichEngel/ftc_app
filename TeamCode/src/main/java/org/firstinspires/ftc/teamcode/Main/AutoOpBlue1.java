@@ -89,8 +89,10 @@ public class AutoOpBlue1 extends LinearOpMode
 
 
         while (opModeIsActive()) {
-/*
+
+
             while (VuforiaActive == 1) {
+                Phone.setPosition(0.75);
                 com.vuforia.CameraDevice.getInstance().setFlashTorchMode(true);
                 RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
                 if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
@@ -116,18 +118,18 @@ public class AutoOpBlue1 extends LinearOpMode
 
 
             VuLogic();
+
             com.vuforia.CameraDevice.getInstance().setFlashTorchMode(false);
-  */
-            PillarsToBePassed = 3;
-    /*        GlyphPickUp();
+            Phone.setPosition(0);
+            GlyphPickUp();
             Jewel();
-      */      Arm.setPosition(0.1);
+            Arm.setPosition(0.1);
             Thread.sleep(250);
-            DriveGyroToRange(-0.2);
+            DriveBackGyroToRange(-0.4);
             PillarsToBePassed = 1;
             DriveGyroToRange(0.1);
-            GyroTurn(-90,0.2);
-            Drive(400, 0.1);
+            GyroTurn(-80,0.2);
+            Drive(700, 0.1);
             DropGlyph();
             Drive(-100, 0.3);
             stop();
@@ -157,9 +159,7 @@ public class AutoOpBlue1 extends LinearOpMode
         DriveBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         DriveBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Arm.setPosition(0);
-        Phone.setPosition(1);
-        RightArm.setPosition(0.5);
-        LeftArm.setPosition(0.5);
+        Phone.setPosition(0);
         VuCentre = false;
         VuRight = false;
         VuLeft = false;
@@ -168,7 +168,8 @@ public class AutoOpBlue1 extends LinearOpMode
         color_C_reader = new I2cDeviceSynchImpl(colorC,I2cAddr.create8bit(0x3c),false);
         color_C_reader.engage();
 
-
+        RightArm.setPosition(0.9);
+        LeftArm.setPosition(0.1);
 
         sensorGyro = hardwareMap.gyroSensor.get("gyro");
         mrGyro = (ModernRoboticsI2cGyro) sensorGyro;
@@ -339,7 +340,7 @@ public class AutoOpBlue1 extends LinearOpMode
 
         RightArm.setPosition(0.5);
         LeftArm.setPosition(0.5);
-        GlyphMotor(800,1);
+        GlyphMotor(900,1);
 
     }
 
@@ -414,19 +415,21 @@ public class AutoOpBlue1 extends LinearOpMode
 
     }
 
+
     public void DriveGyroToRange(double power) throws InterruptedException {
 
         rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "sensor_range_test");
+            double ExtraSpeed = 0;
             double leftSpeed; //Power to feed the motors
             double rightSpeed;
             double target = mrGyro.getIntegratedZValue();  //Starting direction
         Pillars = 0;
-        PillarsToBePassed = PillarsToBePassed + 1;
-
+        PillarsToBePassed = 1;
+        ExtraSpeed = 0.1;
         while (Pillars != PillarsToBePassed ) {  //While we have not passed out intended distance
                 zAccumulated = mrGyro.getIntegratedZValue();  //Current direction
                 leftSpeed = power + (zAccumulated - target) / 100;  //Calculate speed for each side
-                rightSpeed = power - (zAccumulated - target) / 100;  //See Gyro Straight video for detailed explanation
+                rightSpeed = (power - (zAccumulated - target) / 100);  //See Gyro Straight video for detailed explanation
                 leftSpeed = Range.clip(leftSpeed, -1, 1);
                 rightSpeed = Range.clip(rightSpeed, -1, 1);
                 DriveFrontLeft.setPower(leftSpeed);
@@ -438,12 +441,12 @@ public class AutoOpBlue1 extends LinearOpMode
                 telemetry.addData("3. Left Power Var",leftSpeed);
                 telemetry.addData("4. Right Power Var",rightSpeed);
                 telemetry.update();
-            if (rangeSensor.rawUltrasonic() < 16) {
-                Pillars = Pillars+1 ;
+            if (rangeSensor.rawUltrasonic() < 20) {
+                Pillars = 1;
                 telemetry.addData("Pillars Passed:",Pillars);
                 telemetry.addData("Distance:", rangeSensor.getDistance(DistanceUnit.CM));
                 telemetry.update();
-                Thread.sleep(750);
+
             }
             }
 
@@ -453,30 +456,38 @@ public class AutoOpBlue1 extends LinearOpMode
             DriveFrontRight.setPower(0);
         }
 
-    public void DriveToRange(double power) throws InterruptedException {
+
+    public void DriveBackGyroToRange(double power) throws InterruptedException {
 
         rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "sensor_range_test");
+        double ExtraSpeed = 0;
         double leftSpeed; //Power to feed the motors
         double rightSpeed;
         double target = mrGyro.getIntegratedZValue();  //Starting direction
         Pillars = 0;
-
+        PillarsToBePassed = PillarsToBePassed + 1;
+        ExtraSpeed = 0.1;
         while (Pillars != PillarsToBePassed ) {  //While we have not passed out intended distance
-
-
-            DriveFrontLeft.setPower(power);
-            DriveBackLeft.setPower(power);
-            DriveBackRight.setPower(power);
-            DriveFrontRight.setPower(power);
+            zAccumulated = mrGyro.getIntegratedZValue();  //Current direction
+            leftSpeed = power + (zAccumulated - target) / 100;  //Calculate speed for each side
+            rightSpeed = (power - (zAccumulated - target) / 100)-ExtraSpeed;  //See Gyro Straight video for detailed explanation
+            leftSpeed = Range.clip(leftSpeed, -1, 1);
+            rightSpeed = Range.clip(rightSpeed, -1, 1);
+            DriveFrontLeft.setPower(leftSpeed);
+            DriveBackLeft.setPower(leftSpeed);
+            DriveBackRight.setPower(rightSpeed);
+            DriveFrontRight.setPower(rightSpeed);
             telemetry.addData("1. Left", DriveFrontLeft.getPower());
             telemetry.addData("2. Right", DriveFrontRight.getPower());
+            telemetry.addData("3. Left Power Var",leftSpeed);
+            telemetry.addData("4. Right Power Var",rightSpeed);
             telemetry.update();
-            if (rangeSensor.rawUltrasonic() < 16) {
+            if (rangeSensor.rawUltrasonic() < 20) {
                 Pillars = Pillars+1 ;
                 telemetry.addData("Pillars Passed:",Pillars);
                 telemetry.addData("Distance:", rangeSensor.getDistance(DistanceUnit.CM));
                 telemetry.update();
-                Thread.sleep(500);
+                Thread.sleep(750);
             }
         }
 
