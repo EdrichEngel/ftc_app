@@ -104,6 +104,7 @@ public class AutoOpRed1 extends LinearOpMode
 
 
             while (VuforiaActive == 1) {
+                Phone.setPosition(0.9);
                 com.vuforia.CameraDevice.getInstance().setFlashTorchMode(true);
                 RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
                 if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
@@ -128,10 +129,11 @@ public class AutoOpRed1 extends LinearOpMode
             }
             VuLogic();
             com.vuforia.CameraDevice.getInstance().setFlashTorchMode(false);
+            Phone.setPosition(0);
             GlyphPickUp();
             Jewel();
             Arm.setPosition(0.1);
-            Thread.sleep(250);
+            Thread.sleep(1000);
             DriveGyroToRange(0.3);
             PillarsToBePassed = 1;
             DriveGyroToRange(-0.05);
@@ -165,9 +167,7 @@ public class AutoOpRed1 extends LinearOpMode
         DriveBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         DriveBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Arm.setPosition(0);
-        Phone.setPosition(1);
-        RightArm.setPosition(0.5);
-        LeftArm.setPosition(0.5);
+        Phone.setPosition(0);
         VuCentre = false;
         VuRight = false;
         VuLeft = false;
@@ -203,7 +203,7 @@ public class AutoOpRed1 extends LinearOpMode
 
      public void GyroTurn(int target, double TurnSpeed) {
             zAccumulated = mrGyro.getIntegratedZValue();
-            while (Math.abs(zAccumulated - target) > 3 && opModeIsActive()) {
+            while (Math.abs(zAccumulated - target) !=0 && opModeIsActive()) {
                 if (zAccumulated > target) {
                     DriveFrontLeft.setPower(TurnSpeed);
                     DriveFrontRight.setPower(-TurnSpeed);
@@ -446,8 +446,9 @@ public class AutoOpRed1 extends LinearOpMode
                 telemetry.addData("2. Right", DriveFrontRight.getPower());
                 telemetry.addData("3. Left Power Var",leftSpeed);
                 telemetry.addData("4. Right Power Var",rightSpeed);
+                telemetry.addData("4. Right Power Var",rangeSensor.getDistance(DistanceUnit.CM));
                 telemetry.update();
-            if (rangeSensor.rawUltrasonic() < 16) {
+            if (rangeSensor.rawUltrasonic() < 15) {
                 Pillars = Pillars+1 ;
                 telemetry.addData("Pillars Passed:",Pillars);
                 telemetry.addData("Distance:", rangeSensor.getDistance(DistanceUnit.CM));

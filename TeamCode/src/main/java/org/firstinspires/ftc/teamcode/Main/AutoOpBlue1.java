@@ -119,14 +119,14 @@ public class AutoOpBlue1 extends LinearOpMode
             com.vuforia.CameraDevice.getInstance().setFlashTorchMode(false);
   */
             PillarsToBePassed = 3;
-            GlyphPickUp();
+    /*        GlyphPickUp();
             Jewel();
-            Arm.setPosition(0.1);
+      */      Arm.setPosition(0.1);
             Thread.sleep(250);
-            DriveGyroToRange(-0.3);
+            DriveGyroToRange(-0.2);
             PillarsToBePassed = 1;
             DriveGyroToRange(0.1);
-            GyroTurn(-70,0.2);
+            GyroTurn(-90,0.2);
             Drive(400, 0.1);
             DropGlyph();
             Drive(-100, 0.3);
@@ -319,15 +319,15 @@ public class AutoOpBlue1 extends LinearOpMode
         } else {
             Colour = "Red";
         }
-        if (Colour.matches("Red")){
-            telemetry.addData("Red", "%s visible");
+        if (Colour.matches("Blue")){
+            telemetry.addData("Blue", "%s visible");
             telemetry.update();
             GyroTurn(-15,0.1);
             Thread.sleep(1000);
             GyroTurn(0,0.1);
         }
-        if (Colour.matches("Blue")){
-            telemetry.addData("Blue", "%s visible");
+        if (Colour.matches("Red")){
+            telemetry.addData("Red", "%s visible");
             telemetry.update();
             GyroTurn(15,0.1);
             Thread.sleep(1000);
@@ -421,6 +421,7 @@ public class AutoOpBlue1 extends LinearOpMode
             double rightSpeed;
             double target = mrGyro.getIntegratedZValue();  //Starting direction
         Pillars = 0;
+        PillarsToBePassed = PillarsToBePassed + 1;
 
         while (Pillars != PillarsToBePassed ) {  //While we have not passed out intended distance
                 zAccumulated = mrGyro.getIntegratedZValue();  //Current direction
@@ -442,7 +443,7 @@ public class AutoOpBlue1 extends LinearOpMode
                 telemetry.addData("Pillars Passed:",Pillars);
                 telemetry.addData("Distance:", rangeSensor.getDistance(DistanceUnit.CM));
                 telemetry.update();
-                Thread.sleep(500);
+                Thread.sleep(750);
             }
             }
 
