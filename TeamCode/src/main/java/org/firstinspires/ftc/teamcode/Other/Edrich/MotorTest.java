@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.Other.Edrich;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 /**
  * Created by Edric on 2018/02/04.
  */
-
+@Disabled
 public class MotorTest extends LinearOpMode {
     DcMotor DriveFrontLeft;
     DcMotor DriveFrontRight;

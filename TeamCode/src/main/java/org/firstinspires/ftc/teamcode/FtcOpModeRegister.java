@@ -36,7 +36,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpModeRegister;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.ConceptNullOp;
 import org.firstinspires.ftc.teamcode.Main.AutoOpRed1;
-import org.firstinspires.ftc.teamcode.Main.TeleOp;
+import org.firstinspires.ftc.teamcode.Other.Edrich.TeleOp;
 
 /**
  * {@link FtcOpModeRegister} is responsible for registering opmodes for use in an FTC game.

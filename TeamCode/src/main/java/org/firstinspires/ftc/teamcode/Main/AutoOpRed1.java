@@ -46,7 +46,7 @@ public class AutoOpRed1 extends LinearOpMode
     DcMotor DriveBackLeft;
     DcMotor DriveBackRight;
     DcMotor Glyph;
-    Servo Arm;
+    Servo Jewel;
     Servo Phone;
     Servo RightArm;
     Servo LeftArm;
@@ -104,7 +104,7 @@ public class AutoOpRed1 extends LinearOpMode
 
 
             while (VuforiaActive == 1) {
-                Phone.setPosition(0.9);
+                Phone.setPosition(0.95);
                 com.vuforia.CameraDevice.getInstance().setFlashTorchMode(true);
                 RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
                 if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
@@ -127,21 +127,27 @@ public class AutoOpRed1 extends LinearOpMode
                 }
                 telemetry.update();
             }
+            telemetry.addData("VuRight:",VuRight);
+            telemetry.addData("VuLeft:",VuLeft);
+            telemetry.addData("VuCentre:",VuCentre);
+            telemetry.update();
+            Thread.sleep(4000);
             VuLogic();
             com.vuforia.CameraDevice.getInstance().setFlashTorchMode(false);
             Phone.setPosition(0);
             GlyphPickUp();
             Jewel();
-            Arm.setPosition(0.1);
+
+           Jewel.setPosition(0.1);
             Thread.sleep(1000);
             DriveGyroToRange(0.3);
-            PillarsToBePassed = 1;
+    /*        PillarsToBePassed = 1;
             DriveGyroToRange(-0.05);
             GyroTurn(-70, 0.2);
             Drive(400, 0.1);
             DropGlyph();
             Drive(-100, 0.3);
-            stop();
+      */      stop();
 
         }
     }
@@ -155,7 +161,7 @@ public class AutoOpRed1 extends LinearOpMode
         DriveBackLeft = hardwareMap.dcMotor.get("DriveBackLeft");
         DriveBackRight = hardwareMap.dcMotor.get("DriveBackRight");
         Glyph = hardwareMap.dcMotor.get("Glyph");
-        Arm = hardwareMap.servo.get("ServoArm");
+        Jewel = hardwareMap.servo.get("ServoArm");
         Phone = hardwareMap.servo.get("Phone");
         RightArm = hardwareMap.servo.get("RightArm");
         LeftArm =hardwareMap.servo.get("LeftArm");
@@ -166,7 +172,7 @@ public class AutoOpRed1 extends LinearOpMode
         DriveFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         DriveBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         DriveBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Arm.setPosition(0);
+        Jewel.setPosition(0);
         Phone.setPosition(0);
         VuCentre = false;
         VuRight = false;
@@ -184,6 +190,8 @@ public class AutoOpRed1 extends LinearOpMode
         Colour = "None";
         Pillars = 0;
 
+        RightArm.setPosition(0.9);
+        LeftArm.setPosition(0.1);
     }
 
 
@@ -319,7 +327,7 @@ public class AutoOpRed1 extends LinearOpMode
 
         color_C_reader = new I2cDeviceSynchImpl(colorC,I2cAddr.create8bit(0x3c),false);
         color_C_reader.engage();
-        Arm.setPosition(0.45);
+        Jewel.setPosition(0.45);
         Thread.sleep(1000);
         colorCcache = color_C_reader.read(0x04,1);
         if (colorCcache[0] < 7) {
@@ -435,7 +443,7 @@ public class AutoOpRed1 extends LinearOpMode
         while (Pillars != PillarsToBePassed ) {  //While we have not passed out intended distance
                 zAccumulated = mrGyro.getIntegratedZValue();  //Current direction
                 leftSpeed = power + (zAccumulated - target) / 100;  //Calculate speed for each side
-                rightSpeed = power - (zAccumulated - target) / 100;  //See Gyro Straight video for detailed explanation
+                rightSpeed = (power - (zAccumulated - target) / 100)+0.1;  //See Gyro Straight video for detailed explanation
                 leftSpeed = Range.clip(leftSpeed, -1, 1);
                 rightSpeed = Range.clip(rightSpeed, -1, 1);
                 DriveFrontLeft.setPower(leftSpeed);

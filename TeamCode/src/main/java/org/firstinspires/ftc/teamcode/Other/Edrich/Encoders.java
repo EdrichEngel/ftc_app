@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Other.Edrich;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -8,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  * Created by Edric on 2018/02/04.
  */
 @Autonomous
+@Disabled
 public class Encoders extends LinearOpMode {
     DcMotor DriveFrontLeft;
     DcMotor DriveFrontRight;

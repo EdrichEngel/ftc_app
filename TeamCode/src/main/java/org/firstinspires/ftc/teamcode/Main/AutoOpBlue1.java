@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.Main;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -177,6 +178,8 @@ public class AutoOpBlue1 extends LinearOpMode
         Colour = "None";
         Pillars = 0;
 
+        RightArm.setPosition(0.9);
+        LeftArm.setPosition(0.1);
     }
 
 
