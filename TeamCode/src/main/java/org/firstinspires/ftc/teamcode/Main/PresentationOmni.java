@@ -1,18 +1,19 @@
 package org.firstinspires.ftc.teamcode.Main;
 
 
-import com.qualcomm.robotcore.eventloop.opmode.*;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMetaAndClass;
 
 /**
  * Created by Edrich on 2018/02/27.
  */
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
-public class MainTeleOp extends OpMode {// Declare Motors
+//@Disabled
+public class PresentationOmni extends OpMode {// Declare Motors
     DcMotor DriveFrontLeft;
     DcMotor DriveFrontRight;
     DcMotor DriveBackLeft;
@@ -28,7 +29,7 @@ public class MainTeleOp extends OpMode {// Declare Motors
     Servo RelicClaw;
     // Declare Varuables
     double SpeedControl = 1;
-    public double Power;
+
     double GlyphSpeed = 1;
 
     double FR_M = 1;
@@ -53,6 +54,8 @@ public class MainTeleOp extends OpMode {// Declare Motors
 
     boolean rotate = false;
     boolean stick = false;
+
+    double Power = 0.4;
 
     int Selected = 0;
 
@@ -82,6 +85,7 @@ public class MainTeleOp extends OpMode {// Declare Motors
         DriveBackLeft.setPower(0);
         DriveBackRight.setPower(0);
         Glyph.setPower(0);
+        Arm.setPower(0);
         Extending.setPower(0);
 // Set the starting position(angle) of the servo
         Phone.setPosition(1);
@@ -119,8 +123,6 @@ public class MainTeleOp extends OpMode {// Declare Motors
         }
 
     }
-
-
 
     //region Omnidirectional_Steering
     public void front_right(double power) {
@@ -297,11 +299,21 @@ public class MainTeleOp extends OpMode {// Declare Motors
 
 // Completely close clyph arms
         if(gamepad2.b)
-
         {
-
             RightArm.setPosition(0.5);
             LeftArm.setPosition(0.5);
+        }
+// Completely Pickup The Jewel Selector
+        if (gamepad1.y){
+            Jewel.setPosition(0);
+        }
+// Completely Down Jewel Selector
+        if (gamepad1.a){
+            Jewel.setPosition(0.45);
+        }
+// 70° Jewel Selector Open
+        if (gamepad1.x){
+            Jewel.setPosition(0.1);
         }
 
 // 60° angle clyph arms
@@ -321,7 +333,7 @@ public class MainTeleOp extends OpMode {// Declare Motors
             RightArm.setPosition(0.55);
             LeftArm.setPosition(0.45);
         }
-// Double lock to ensure that we don't accidentally release the relic
+        // Double lock to ensure that we don't accidentally release the relic
         if((gamepad2.left_trigger >0.5)&&(gamepad2.right_trigger >0.5))
 
         {
@@ -333,9 +345,6 @@ public class MainTeleOp extends OpMode {// Declare Motors
         {
             RelicClaw.setPosition(0);
         }
-// Lock front motor when dropping relic
-
-
         Extending.setPower(gamepad2.left_stick_y);
 
         Arm.setPower(gamepad2.right_stick_y*Power);
@@ -352,6 +361,8 @@ public class MainTeleOp extends OpMode {// Declare Motors
             telemetry.addData("Power:", Power);
             telemetry.update();
         }
+        Phone.setPosition(gamepad1.right_trigger);
+
         /* Changing speed when picking up the glyph.
    Slower when going down.
    Faster when moving up.

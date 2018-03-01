@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Main;
+package org.firstinspires.ftc.teamcode.Other.Edrich;
 
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;

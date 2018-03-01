@@ -9,7 +9,8 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Created by Edric on 2018/02/24.
  */
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
-public class Presentation extends LinearOpMode{
+@Disabled
+public class PresentationTank extends LinearOpMode{
     DcMotor DriveFrontLeft;
     DcMotor DriveFrontRight;
     DcMotor DriveBackLeft;
