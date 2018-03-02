@@ -58,6 +58,7 @@ public class AutoOpBlue1 extends LinearOpMode
     private byte[] colorCcache;
     double Pillars;
     double GyroX;
+    int DriveToRangeAngle;
 
 
 
@@ -93,7 +94,7 @@ public class AutoOpBlue1 extends LinearOpMode
 
 
             while (VuforiaActive == 1) {
-                Phone.setPosition(0.75);
+                Phone.setPosition(0.97);
                 com.vuforia.CameraDevice.getInstance().setFlashTorchMode(true);
                 RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
                 if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
@@ -125,14 +126,14 @@ public class AutoOpBlue1 extends LinearOpMode
             GlyphPickUp();
             Jewel();
             Arm.setPosition(0.1);
-            Thread.sleep(250);
-            DriveBackGyroToRange(-0.4);
+            Thread.sleep(1000);
+            DriveBackGyroToRange(-0.3);
             PillarsToBePassed = 1;
             DriveGyroToRange(0.1);
-            GyroTurn(-80,0.2);
-            Drive(700, 0.1);
+            GyroTurn(DriveToRangeAngle,0.2);
+            Drive(500, 0.1);
             DropGlyph();
-            Drive(-100, 0.3);
+            Drive(-300, 0.3);
             stop();
 
         }
@@ -315,7 +316,7 @@ public class AutoOpBlue1 extends LinearOpMode
 
         color_C_reader = new I2cDeviceSynchImpl(colorC,I2cAddr.create8bit(0x3c),false);
         color_C_reader.engage();
-        Arm.setPosition(0.45);
+        Arm.setPosition(0.425);
         Thread.sleep(1000);
         colorCcache = color_C_reader.read(0x04,1);
         if (colorCcache[0] < 7) {
@@ -328,14 +329,14 @@ public class AutoOpBlue1 extends LinearOpMode
             telemetry.update();
             GyroTurn(-15,0.1);
             Thread.sleep(1000);
-            GyroTurn(0,0.1);
+            GyroTurn(3,0.1);
         }
         if (Colour.matches("Red")){
             telemetry.addData("Red", "%s visible");
             telemetry.update();
             GyroTurn(15,0.1);
             Thread.sleep(1000);
-            GyroTurn(0,0.1);
+            GyroTurn(-3,0.1);
         }
     }
 
@@ -343,7 +344,7 @@ public class AutoOpBlue1 extends LinearOpMode
 
         RightArm.setPosition(0.5);
         LeftArm.setPosition(0.5);
-        GlyphMotor(900,1);
+        GlyphMotor(1000,1);
 
     }
 
@@ -352,16 +353,19 @@ public class AutoOpBlue1 extends LinearOpMode
             PillarsToBePassed = 1;
             telemetry.addData("Pillars to be passed:","3");
             telemetry.update();
+            DriveToRangeAngle = -85;
         }
         if (VuCentre == true){
             PillarsToBePassed = 2;
             telemetry.addData("Pillars to be passed:","2");
             telemetry.update();
+            DriveToRangeAngle = -110;
         }
         if (VuRight == true){
             PillarsToBePassed = 3;
             telemetry.addData("Pillars to be passed:","1");
             telemetry.update();
+            DriveToRangeAngle = -80;
         }
         else{
             PillarsToBePassed = 1;
@@ -444,7 +448,7 @@ public class AutoOpBlue1 extends LinearOpMode
                 telemetry.addData("3. Left Power Var",leftSpeed);
                 telemetry.addData("4. Right Power Var",rightSpeed);
                 telemetry.update();
-            if (rangeSensor.rawUltrasonic() < 20) {
+            if (rangeSensor.rawUltrasonic() < 17) {
                 Pillars = 1;
                 telemetry.addData("Pillars Passed:",Pillars);
                 telemetry.addData("Distance:", rangeSensor.getDistance(DistanceUnit.CM));
@@ -468,7 +472,7 @@ public class AutoOpBlue1 extends LinearOpMode
         double rightSpeed;
         double target = mrGyro.getIntegratedZValue();  //Starting direction
         Pillars = 0;
-        PillarsToBePassed = PillarsToBePassed + 1;
+   //     PillarsToBePassed = PillarsToBePassed + 1;
         ExtraSpeed = 0.1;
         while (Pillars != PillarsToBePassed ) {  //While we have not passed out intended distance
             zAccumulated = mrGyro.getIntegratedZValue();  //Current direction
@@ -485,12 +489,12 @@ public class AutoOpBlue1 extends LinearOpMode
             telemetry.addData("3. Left Power Var",leftSpeed);
             telemetry.addData("4. Right Power Var",rightSpeed);
             telemetry.update();
-            if (rangeSensor.rawUltrasonic() < 20) {
+            if (rangeSensor.rawUltrasonic() < 17) {
                 Pillars = Pillars+1 ;
                 telemetry.addData("Pillars Passed:",Pillars);
                 telemetry.addData("Distance:", rangeSensor.getDistance(DistanceUnit.CM));
                 telemetry.update();
-                Thread.sleep(750);
+                Thread.sleep(1000);
             }
         }
 
@@ -504,7 +508,7 @@ public class AutoOpBlue1 extends LinearOpMode
         public void DropGlyph(){
             RightArm.setPosition(0.9);
             LeftArm.setPosition(0.1);
-            GlyphMotor(-700,-1);
+            GlyphMotor(-800,-1);
         }
 
 

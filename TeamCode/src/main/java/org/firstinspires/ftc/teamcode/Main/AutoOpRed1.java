@@ -115,12 +115,19 @@ public class AutoOpRed1 extends LinearOpMode
                     VuforiaActive = 0;
                     if (DecodedMessage.equals(RelicRecoveryVuMark.CENTER)) {
                         VuCentre = true;
+                        VuLeft = false;
+                        VuRight = false;
                     }
                     if (DecodedMessage.equals(RelicRecoveryVuMark.LEFT)) {
+                        VuCentre = false;
                         VuLeft = true;
+                        VuRight = false;
                     }
                     if (DecodedMessage.equals(RelicRecoveryVuMark.RIGHT)) {
+                        VuCentre = false;
+                        VuLeft = false;
                         VuRight = true;
+
                     }
                 } else {
                     telemetry.addData("VuMark", "not visible");
@@ -131,23 +138,24 @@ public class AutoOpRed1 extends LinearOpMode
             telemetry.addData("VuLeft:",VuLeft);
             telemetry.addData("VuCentre:",VuCentre);
             telemetry.update();
-            Thread.sleep(4000);
             VuLogic();
             com.vuforia.CameraDevice.getInstance().setFlashTorchMode(false);
             Phone.setPosition(0);
             GlyphPickUp();
             Jewel();
-
-           Jewel.setPosition(0.1);
+            telemetry.addData("Pillars to be passed:",PillarsToBePassed);
+            telemetry.update();
+            Thread.sleep(4000);
+            Jewel.setPosition(0.1);
             Thread.sleep(1000);
             DriveGyroToRange(0.3);
-    /*        PillarsToBePassed = 1;
-            DriveGyroToRange(-0.05);
+            PillarsToBePassed = 1;
+            DriveGyroToRange(-0.1);
             GyroTurn(-70, 0.2);
             Drive(400, 0.1);
             DropGlyph();
-            Drive(-100, 0.3);
-      */      stop();
+            Drive(-300, 0.3);
+            stop();
 
         }
     }
@@ -357,7 +365,7 @@ public class AutoOpRed1 extends LinearOpMode
 
         RightArm.setPosition(0.5);
         LeftArm.setPosition(0.5);
-        GlyphMotor(800,1);
+        GlyphMotor(1000,1);
 
     }
 
@@ -367,12 +375,12 @@ public class AutoOpRed1 extends LinearOpMode
             telemetry.addData("Pillars to be passed:","3");
             telemetry.update();
         }
-        if (VuCentre == true){
+        else if (VuCentre == true){
             PillarsToBePassed = 2;
             telemetry.addData("Pillars to be passed:","2");
             telemetry.update();
         }
-        if (VuRight == true){
+        else if (VuRight == true){
             PillarsToBePassed = 1;
             telemetry.addData("Pillars to be passed:","1");
             telemetry.update();
@@ -508,7 +516,7 @@ public class AutoOpRed1 extends LinearOpMode
         public void DropGlyph(){
             RightArm.setPosition(0.9);
             LeftArm.setPosition(0.1);
-            GlyphMotor(-700,-1);
+            GlyphMotor(-900,-1);
         }
 
 
