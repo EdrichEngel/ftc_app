@@ -1,7 +1,9 @@
-package org.firstinspires.ftc.teamcode.Main;
+package org.firstinspires.ftc.teamcode.Main.Nationals;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -9,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
  * Created by Edric on 2018/03/29.
  */
 @TeleOp
+@Disabled
 public class Extend extends LinearOpMode {
     DcMotor DriveFrontLeft;
     DcMotor DriveFrontRight;
@@ -18,6 +21,7 @@ public class Extend extends LinearOpMode {
     DcMotor ExtendRight;
     DcMotor RelicRight;
     DcMotor RelicLeft;
+
     double SpeedControl = 1;
     double Extend = 0;
 

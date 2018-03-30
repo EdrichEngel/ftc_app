@@ -1,7 +1,8 @@
-package org.firstinspires.ftc.teamcode.Main;
+package org.firstinspires.ftc.teamcode.Main.Nationals;
 
 
 import android.opengl.GLU;
+import android.os.Trace;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
@@ -37,16 +38,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  * Created by Edrich on 9/23/2017.
  */
 
-@Autonomous(name = "BasicAutoOp", group = "Basic")
-//@Disabled
-public class BasicAutoOp extends LinearOpMode
+@Autonomous(name = "Red1", group = "Red")
+@Disabled
+public class AutoOpRed1 extends LinearOpMode
 {
     DcMotor DriveFrontLeft;
     DcMotor DriveFrontRight;
     DcMotor DriveBackLeft;
     DcMotor DriveBackRight;
     DcMotor Glyph;
-    Servo Arm;
+    Servo Jewel;
     Servo Phone;
     Servo RightArm;
     Servo LeftArm;
@@ -73,17 +74,92 @@ public class BasicAutoOp extends LinearOpMode
 
     ModernRoboticsI2cRangeSensor rangeSensor;
 
+    double VuforiaActive = 1;
+    private RelicRecoveryVuMark FoundVumark;
+    private RelicRecoveryVuMark DecodedMessage;
+    public static final String TAG = "Vuforia VuMark Sample";
+    VuforiaLocalizer vuforia;
 
     @Override
     public void runOpMode() throws InterruptedException {
         InitSystem();
+    /*    int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+        parameters.vuforiaLicenseKey = "AUO3EHb/////AAAAGSI5YtsUZUnXmqs2hS+aWDczQOW35bYvHctTDIwu8Cri2uQQQMF806Y9y19+y/tRwcx7BcTtmonYebC+34yGbTFKEYk7WKScXsAsdkb0F+D36udYE0b4Y5ytuFgzFoimN7gLa4P2xhrgfuBjgBJtDIhVlDECMiQaASZBdrUUHPIDDLe8BLQ0Pqa/tj4D6L4Lr68Pwr/PR4JYov8NncvJtdG7WvDtJFY4fqRGWCoLPwvAkvmDUmoTRlovnpiyDpdn0mhaLIY7baSn0VspvIoxY8utZgjOpsOF3WJM88GVaijqus5p1j47aNFJtPOGYfwaSEjiHUbigyohkcsTAg65Bl2469QJNTScnuwk1jAWtXJj";
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+        this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
+        VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
+        VuforiaTrackable relicTemplate = relicTrackables.get(0);
+        relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
         telemetry.addData(">", "Press Play to start");
         telemetry.update();
         waitForStart();
+        relicTrackables.activate();
+      */
+        waitForStart();
+        mrGyro.resetZAxisIntegrator();
+        AfterWaitForStart();
+
+
+
 
         while (opModeIsActive()) {
+
+
+        /*    while (VuforiaActive == 1) {
+                Phone.setPosition(0.95);
+                com.vuforia.CameraDevice.getInstance().setFlashTorchMode(true);
+                RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
+                if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
+                    telemetry.addData("VuMark", "%s visible", vuMark);
+                    FoundVumark = vuMark;
+                    RelicRecoveryVuMark DecodedMessage = RelicRecoveryVuMark.from(relicTemplate);
+
+                    VuforiaActive = 0;
+                    if (DecodedMessage.equals(RelicRecoveryVuMark.CENTER)) {
+                        VuCentre = true;
+                        VuLeft = false;
+                        VuRight = false;
+                    }
+                    if (DecodedMessage.equals(RelicRecoveryVuMark.LEFT)) {
+                        VuCentre = false;
+                        VuLeft = true;
+                        VuRight = false;
+                    }
+                    if (DecodedMessage.equals(RelicRecoveryVuMark.RIGHT)) {
+                        VuCentre = false;
+                        VuLeft = false;
+                        VuRight = true;
+
+                    }
+                } else {
+                    telemetry.addData("VuMark", "not visible");
+                }
+                telemetry.update();
+            }
+            telemetry.addData("VuRight:",VuRight);
+            telemetry.addData("VuLeft:",VuLeft);
+            telemetry.addData("VuCentre:",VuCentre);
+            telemetry.update();
+
+        */  VuRight = true;
+            VuLogic();
+            com.vuforia.CameraDevice.getInstance().setFlashTorchMode(false);
             Phone.setPosition(0);
-            Drive(2800,0.4);
+            GlyphPickUp();
+            Jewel();
+            telemetry.addData("Pillars to be passed:",PillarsToBePassed);
+            telemetry.update();
+            Thread.sleep(500);
+            Jewel.setPosition(0.1);
+            Thread.sleep(1000);
+            DriveGyroToRange(0.3);
+            PillarsToBePassed = 1;
+            DriveGyroToRange(-0.1);
+            GyroTurn(-70, 0.2);
+            Drive(400, 0.1);
+            DropGlyph();
+            Drive(-300, 0.3);
             stop();
 
         }
@@ -98,7 +174,7 @@ public class BasicAutoOp extends LinearOpMode
         DriveBackLeft = hardwareMap.dcMotor.get("DriveBackLeft");
         DriveBackRight = hardwareMap.dcMotor.get("DriveBackRight");
         Glyph = hardwareMap.dcMotor.get("Glyph");
-        Arm = hardwareMap.servo.get("ServoArm");
+        Jewel = hardwareMap.servo.get("ServoArm");
         Phone = hardwareMap.servo.get("Phone");
         RightArm = hardwareMap.servo.get("RightArm");
         LeftArm =hardwareMap.servo.get("LeftArm");
@@ -109,7 +185,7 @@ public class BasicAutoOp extends LinearOpMode
         DriveFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         DriveBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         DriveBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Arm.setPosition(0);
+        Jewel.setPosition(0);
         Phone.setPosition(0);
         VuCentre = false;
         VuRight = false;
@@ -129,13 +205,12 @@ public class BasicAutoOp extends LinearOpMode
 
         RightArm.setPosition(0.9);
         LeftArm.setPosition(0.1);
-
     }
 
 
     public void AfterWaitForStart()
     {
-        while (mrGyro.isCalibrating()) {}
+           while (mrGyro.isCalibrating()) {}
         runtime.reset();
     }
 
@@ -147,31 +222,31 @@ public class BasicAutoOp extends LinearOpMode
 
     }
 
-    public void GyroTurn(int target, double TurnSpeed) {
-        zAccumulated = mrGyro.getIntegratedZValue();
-        while (Math.abs(zAccumulated - target) !=0 && opModeIsActive()) {
-            if (zAccumulated > target) {
-                DriveFrontLeft.setPower(TurnSpeed);
-                DriveFrontRight.setPower(-TurnSpeed);
-                DriveBackLeft.setPower(TurnSpeed);
-                DriveBackRight.setPower(-TurnSpeed);
-            }
-
-            if (zAccumulated < target) {
-                DriveFrontLeft.setPower(-TurnSpeed);
-                DriveFrontRight.setPower(TurnSpeed);
-                DriveBackLeft.setPower(-TurnSpeed);
-                DriveBackRight.setPower(TurnSpeed);
-            }
+     public void GyroTurn(int target, double TurnSpeed) {
             zAccumulated = mrGyro.getIntegratedZValue();
-            telemetry.addData("accu", String.format("%03d", zAccumulated));
-            telemetry.update();
+            while (Math.abs(zAccumulated - target) !=0 && opModeIsActive()) {
+                if (zAccumulated > target) {
+                    DriveFrontLeft.setPower(TurnSpeed);
+                    DriveFrontRight.setPower(-TurnSpeed);
+                    DriveBackLeft.setPower(TurnSpeed);
+                    DriveBackRight.setPower(-TurnSpeed);
+                }
+
+                if (zAccumulated < target) {
+                    DriveFrontLeft.setPower(-TurnSpeed);
+                    DriveFrontRight.setPower(TurnSpeed);
+                    DriveBackLeft.setPower(-TurnSpeed);
+                    DriveBackRight.setPower(TurnSpeed);
+                }
+                zAccumulated = mrGyro.getIntegratedZValue();
+                telemetry.addData("accu", String.format("%03d", zAccumulated));
+                telemetry.update();
+            }
+            DriveFrontLeft.setPower(0);
+            DriveFrontRight.setPower(0);
+            DriveBackLeft.setPower(0);
+            DriveBackRight.setPower(0);
         }
-        DriveFrontLeft.setPower(0);
-        DriveFrontRight.setPower(0);
-        DriveBackLeft.setPower(0);
-        DriveBackRight.setPower(0);
-    }
     private void DriveForward(double power) {
 
         DriveFrontLeft.setPower(power);
@@ -189,41 +264,41 @@ public class BasicAutoOp extends LinearOpMode
         DriveFrontRight.setPower(0);
     }
 
-    public void Drive(int distance, double power){
+        public void Drive(int distance, double power){
 
-        // Reset encoders
-        DriveFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        DriveBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        DriveBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        DriveFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                // Reset encoders
+                DriveFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                DriveBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                DriveBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                DriveFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        // Change to run to position prior to setting target
-        // Run to position
-        DriveFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        DriveBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        DriveBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        DriveFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                // Change to run to position prior to setting target
+                // Run to position
+            DriveFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            DriveBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            DriveBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            DriveFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        // Set target position
-        DriveFrontLeft.setTargetPosition(distance);
-        DriveBackLeft.setTargetPosition(distance);
-        DriveBackRight.setTargetPosition(distance);
-        DriveFrontRight.setTargetPosition(distance);
+                // Set target position
+            DriveFrontLeft.setTargetPosition(distance);
+            DriveBackLeft.setTargetPosition(distance);
+            DriveBackRight.setTargetPosition(distance);
+            DriveFrontRight.setTargetPosition(distance);
 
-        // Set drive power
-        DriveForward(power);
+                // Set drive power
+                DriveForward(power);
 
-        // wait until position is reached
-        while (opModeIsActive() && DriveFrontLeft.isBusy() && DriveFrontRight.isBusy()) idle();
+                // wait until position is reached
+                while (opModeIsActive() && DriveFrontLeft.isBusy() && DriveFrontRight.isBusy()) idle();
 
-        //stopRobot and change modes back to normal
-        stopRobot();
-        DriveFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        DriveBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        DriveBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        DriveFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                //stopRobot and change modes back to normal
+                stopRobot();
+            DriveFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            DriveBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            DriveBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            DriveFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-    }
+        }
 
     public void DriveForwardGyro(int distance, double power){
         double leftSpeed; //Power to feed the motors
@@ -265,7 +340,7 @@ public class BasicAutoOp extends LinearOpMode
 
         color_C_reader = new I2cDeviceSynchImpl(colorC,I2cAddr.create8bit(0x3c),false);
         color_C_reader.engage();
-        Arm.setPosition(0.45);
+        Jewel.setPosition(0.45);
         Thread.sleep(1000);
         colorCcache = color_C_reader.read(0x04,1);
         if (colorCcache[0] < 7) {
@@ -295,7 +370,7 @@ public class BasicAutoOp extends LinearOpMode
 
         RightArm.setPosition(0.5);
         LeftArm.setPosition(0.5);
-        GlyphMotor(800,1);
+        GlyphMotor(1000,1);
 
     }
 
@@ -305,12 +380,12 @@ public class BasicAutoOp extends LinearOpMode
             telemetry.addData("Pillars to be passed:","3");
             telemetry.update();
         }
-        if (VuCentre == true){
+        else if (VuCentre == true){
             PillarsToBePassed = 2;
             telemetry.addData("Pillars to be passed:","2");
             telemetry.update();
         }
-        if (VuRight == true){
+        else if (VuRight == true){
             PillarsToBePassed = 1;
             telemetry.addData("Pillars to be passed:","1");
             telemetry.update();
@@ -344,25 +419,25 @@ public class BasicAutoOp extends LinearOpMode
     public void GlyphMotor(int distance, double power){
 
 
-        // Reset encoders
+            // Reset encoders
         Glyph.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        // Change to run to position prior to setting target
-        // Run to position
+            // Change to run to position prior to setting target
+            // Run to position
 
         Glyph.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        // Set target position
+            // Set target position
         Glyph.setTargetPosition(distance);
 
 
-        // Set drive power
+            // Set drive power
         Glyph.setPower(0.2);
 
-        // wait until position is reached
-        while (opModeIsActive() && Glyph.isBusy() ) idle();
+            // wait until position is reached
+            while (opModeIsActive() && Glyph.isBusy() ) idle();
 
-        //stopRobot and change modes back to normal
+            //stopRobot and change modes back to normal
         Glyph.setPower(0);
 
         Glyph.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -373,27 +448,27 @@ public class BasicAutoOp extends LinearOpMode
     public void DriveGyroToRange(double power) throws InterruptedException {
 
         rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "sensor_range_test");
-        double leftSpeed; //Power to feed the motors
-        double rightSpeed;
-        double target = mrGyro.getIntegratedZValue();  //Starting direction
+            double leftSpeed; //Power to feed the motors
+            double rightSpeed;
+            double target = mrGyro.getIntegratedZValue();  //Starting direction
         Pillars = 0;
 
         while (Pillars != PillarsToBePassed ) {  //While we have not passed out intended distance
-            zAccumulated = mrGyro.getIntegratedZValue();  //Current direction
-            leftSpeed = power + (zAccumulated - target) / 100;  //Calculate speed for each side
-            rightSpeed = power - (zAccumulated - target) / 100;  //See Gyro Straight video for detailed explanation
-            leftSpeed = Range.clip(leftSpeed, -1, 1);
-            rightSpeed = Range.clip(rightSpeed, -1, 1);
-            DriveFrontLeft.setPower(leftSpeed);
-            DriveBackLeft.setPower(leftSpeed);
-            DriveBackRight.setPower(rightSpeed);
-            DriveFrontRight.setPower(rightSpeed);
-            telemetry.addData("1. Left", DriveFrontLeft.getPower());
-            telemetry.addData("2. Right", DriveFrontRight.getPower());
-            telemetry.addData("3. Left Power Var",leftSpeed);
-            telemetry.addData("4. Right Power Var",rightSpeed);
-            telemetry.addData("4. Right Power Var",rangeSensor.getDistance(DistanceUnit.CM));
-            telemetry.update();
+                zAccumulated = mrGyro.getIntegratedZValue();  //Current direction
+                leftSpeed = power + (zAccumulated - target) / 100;  //Calculate speed for each side
+                rightSpeed = (power - (zAccumulated - target) / 100)+0.1;  //See Gyro Straight video for detailed explanation
+                leftSpeed = Range.clip(leftSpeed, -1, 1);
+                rightSpeed = Range.clip(rightSpeed, -1, 1);
+                DriveFrontLeft.setPower(leftSpeed);
+                DriveBackLeft.setPower(leftSpeed);
+                DriveBackRight.setPower(rightSpeed);
+                DriveFrontRight.setPower(rightSpeed);
+                telemetry.addData("1. Left", DriveFrontLeft.getPower());
+                telemetry.addData("2. Right", DriveFrontRight.getPower());
+                telemetry.addData("3. Left Power Var",leftSpeed);
+                telemetry.addData("4. Right Power Var",rightSpeed);
+                telemetry.addData("4. Right Power Var",rangeSensor.getDistance(DistanceUnit.CM));
+                telemetry.update();
             if (rangeSensor.rawUltrasonic() < 15) {
                 Pillars = Pillars+1 ;
                 telemetry.addData("Pillars Passed:",Pillars);
@@ -401,13 +476,13 @@ public class BasicAutoOp extends LinearOpMode
                 telemetry.update();
                 Thread.sleep(500);
             }
-        }
+            }
 
-        DriveFrontLeft.setPower(0);
-        DriveBackLeft.setPower(0);
-        DriveBackRight.setPower(0);
-        DriveFrontRight.setPower(0);
-    }
+            DriveFrontLeft.setPower(0);
+            DriveBackLeft.setPower(0);
+            DriveBackRight.setPower(0);
+            DriveFrontRight.setPower(0);
+        }
 
     public void DriveToRange(double power) throws InterruptedException {
 
@@ -443,34 +518,34 @@ public class BasicAutoOp extends LinearOpMode
     }
 
 
-    public void DropGlyph(){
-        RightArm.setPosition(0.9);
-        LeftArm.setPosition(0.1);
-        GlyphMotor(-700,-1);
-    }
+        public void DropGlyph(){
+            RightArm.setPosition(0.9);
+            LeftArm.setPosition(0.1);
+            GlyphMotor(-900,-1);
+        }
 
 
-    public void DriveOffStone(double Speed) throws InterruptedException {
-        DriveFrontLeft.setPower(Speed);
-        DriveBackLeft.setPower(Speed);
-        DriveBackRight.setPower(Speed);
-        DriveFrontRight.setPower(Speed);
-        Thread.sleep(250);
-        while ((GyroX != 0) && opModeIsActive()) {
-            GyroX = mrGyro.rawX();
+        public void DriveOffStone(double Speed) throws InterruptedException {
             DriveFrontLeft.setPower(Speed);
             DriveBackLeft.setPower(Speed);
             DriveBackRight.setPower(Speed);
             DriveFrontRight.setPower(Speed);
+            Thread.sleep(250);
+            while ((GyroX != 0) && opModeIsActive()) {
+                GyroX = mrGyro.rawX();
+                DriveFrontLeft.setPower(Speed);
+                DriveBackLeft.setPower(Speed);
+                DriveBackRight.setPower(Speed);
+                DriveFrontRight.setPower(Speed);
+            }
+
+
+            DriveFrontLeft.setPower(0);
+            DriveBackLeft.setPower(0);
+            DriveBackRight.setPower(0);
+            DriveFrontRight.setPower(0);
+
         }
-
-
-        DriveFrontLeft.setPower(0);
-        DriveBackLeft.setPower(0);
-        DriveBackRight.setPower(0);
-        DriveFrontRight.setPower(0);
-
-    }
 }
 
 

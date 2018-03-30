@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Main;
+package org.firstinspires.ftc.teamcode.Main.Nationals;
 
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
@@ -17,21 +17,16 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-import org.firstinspires.ftc.robotcore.internal.android.dx.rop.code.TranslationAdvice;
+
 
 /**
  * Created by Edrich on 9/23/2017.
  */
 
-@Autonomous(name = "Blue1", group = "Blue")
-//@Disabled
-public class AutoOpBlue1 extends LinearOpMode
+@Autonomous(name = "BlueJewel", group = "Blue")
+@Disabled
+public class JewelBlue extends LinearOpMode
 {
     DcMotor DriveFrontLeft;
     DcMotor DriveFrontRight;
@@ -42,10 +37,7 @@ public class AutoOpBlue1 extends LinearOpMode
     Servo Phone;
     Servo RightArm;
     Servo LeftArm;
-    String StringVuForia;
-    boolean VuLeft;
-    boolean VuCentre;
-    boolean VuRight;
+
     String Colour;
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime timer = new ElapsedTime();
@@ -66,80 +58,16 @@ public class AutoOpBlue1 extends LinearOpMode
 
     ModernRoboticsI2cRangeSensor rangeSensor;
 
-    double VuforiaActive = 1;
-    private RelicRecoveryVuMark FoundVumark;
-    private RelicRecoveryVuMark DecodedMessage;
-    public static final String TAG = "Vuforia VuMark Sample";
-    VuforiaLocalizer vuforia;
 
     @Override
     public void runOpMode() throws InterruptedException {
         InitSystem();
-/*        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
-        parameters.vuforiaLicenseKey = "AUO3EHb/////AAAAGSI5YtsUZUnXmqs2hS+aWDczQOW35bYvHctTDIwu8Cri2uQQQMF806Y9y19+y/tRwcx7BcTtmonYebC+34yGbTFKEYk7WKScXsAsdkb0F+D36udYE0b4Y5ytuFgzFoimN7gLa4P2xhrgfuBjgBJtDIhVlDECMiQaASZBdrUUHPIDDLe8BLQ0Pqa/tj4D6L4Lr68Pwr/PR4JYov8NncvJtdG7WvDtJFY4fqRGWCoLPwvAkvmDUmoTRlovnpiyDpdn0mhaLIY7baSn0VspvIoxY8utZgjOpsOF3WJM88GVaijqus5p1j47aNFJtPOGYfwaSEjiHUbigyohkcsTAg65Bl2469QJNTScnuwk1jAWtXJj";
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
-        this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
-        VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
-        VuforiaTrackable relicTemplate = relicTrackables.get(0);
-        relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
-        telemetry.addData(">", "Press Play to start");
-        telemetry.update();
+    mrGyro.resetZAxisIntegrator();
         waitForStart();
-        relicTrackables.activate();
-
-  */
-        waitForStart();
-mrGyro.resetZAxisIntegrator();
-        AfterWaitForStart();
-
-
+    AfterWaitForStart();
         while (opModeIsActive()) {
-
-
-/*            while (VuforiaActive == 1) {
-                Phone.setPosition(0.97);
-                com.vuforia.CameraDevice.getInstance().setFlashTorchMode(true);
-                RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
-                if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
-                    telemetry.addData("VuMark", "%s visible", vuMark);
-                    FoundVumark = vuMark;
-                    RelicRecoveryVuMark DecodedMessage = RelicRecoveryVuMark.from(relicTemplate);
-
-                    VuforiaActive = 0;
-                    if (DecodedMessage.equals(RelicRecoveryVuMark.CENTER)) {
-                        VuCentre = true;
-                    }
-                    if (DecodedMessage.equals(RelicRecoveryVuMark.LEFT)) {
-                        VuLeft = true;
-                    }
-                    if (DecodedMessage.equals(RelicRecoveryVuMark.RIGHT)) {
-                        VuRight = true;
-                    }
-                } else {
-                    telemetry.addData("VuMark", "not visible");
-                }
-                telemetry.update();
-            }
-
-*/
-            VuLeft = true;
-            VuLogic();
-            com.vuforia.CameraDevice.getInstance().setFlashTorchMode(false);
-            Phone.setPosition(0);
-            GlyphPickUp();
             Jewel();
-            Arm.setPosition(0.1);
-            Thread.sleep(500);
-            DriveBackGyroToRange(-0.3);
-            PillarsToBePassed = 1;
-            DriveGyroToRange(0.1);
-            GyroTurn(DriveToRangeAngle,0.2);
-            Drive(500, 0.1);
-            DropGlyph();
-            Drive(-300, 0.3);
             stop();
-
         }
     }
 
@@ -166,9 +94,7 @@ mrGyro.resetZAxisIntegrator();
         DriveBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Arm.setPosition(0);
         Phone.setPosition(0);
-        VuCentre = false;
-        VuRight = false;
-        VuLeft = false;
+
 
         colorC = hardwareMap.i2cDevice.get("cc");
         color_C_reader = new I2cDeviceSynchImpl(colorC,I2cAddr.create8bit(0x3c),false);
@@ -320,7 +246,7 @@ mrGyro.resetZAxisIntegrator();
 
         color_C_reader = new I2cDeviceSynchImpl(colorC,I2cAddr.create8bit(0x3c),false);
         color_C_reader.engage();
-        Arm.setPosition(0.425);
+        Arm.setPosition(0.45);
         Thread.sleep(1000);
         colorCcache = color_C_reader.read(0x04,1);
         if (colorCcache[0] < 7) {
@@ -352,7 +278,7 @@ mrGyro.resetZAxisIntegrator();
 
     }
 
-    public void VuLogic(){
+  /*  public void VuLogic(){
         if (VuLeft == true){
             PillarsToBePassed = 1;
             telemetry.addData("Pillars to be passed:","3");
@@ -376,7 +302,7 @@ mrGyro.resetZAxisIntegrator();
             telemetry.addData("Error", "%s visible", "Don't know how many pillars to be passed");
         }
     }
-    public void Range() throws InterruptedException {
+    */public void Range() throws InterruptedException {
 
         rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "sensor_range_test");
         while (Pillars != PillarsToBePassed ) {

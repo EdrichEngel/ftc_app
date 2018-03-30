@@ -1,9 +1,12 @@
-package org.firstinspires.ftc.teamcode.Main;
+package org.firstinspires.ftc.teamcode.Main.Nationals;
 
+
+import android.opengl.GLU;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -12,20 +15,31 @@ import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.I2cDevice;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchImpl;
+import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 /**
  * Created by Edrich on 9/23/2017.
  */
 
-@Autonomous(name = "BlueJewel", group = "Blue")
-//@Disabled
-public class JewelBlue extends LinearOpMode
+@Autonomous(name = "BasicAutoOp", group = "Basic")
+@Disabled
+public class BasicAutoOp extends LinearOpMode
 {
     DcMotor DriveFrontLeft;
     DcMotor DriveFrontRight;
@@ -36,7 +50,10 @@ public class JewelBlue extends LinearOpMode
     Servo Phone;
     Servo RightArm;
     Servo LeftArm;
-
+    String StringVuForia;
+    boolean VuLeft;
+    boolean VuCentre;
+    boolean VuRight;
     String Colour;
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime timer = new ElapsedTime();
@@ -50,7 +67,6 @@ public class JewelBlue extends LinearOpMode
     private byte[] colorCcache;
     double Pillars;
     double GyroX;
-    int DriveToRangeAngle;
 
 
 
@@ -61,15 +77,17 @@ public class JewelBlue extends LinearOpMode
     @Override
     public void runOpMode() throws InterruptedException {
         InitSystem();
-    mrGyro.resetZAxisIntegrator();
+        telemetry.addData(">", "Press Play to start");
+        telemetry.update();
         waitForStart();
-    AfterWaitForStart();
+
         while (opModeIsActive()) {
-            Jewel();
+            Phone.setPosition(0);
+            Drive(2800,0.4);
             stop();
+
         }
     }
-
 
 
     public void InitSystem() {
@@ -93,14 +111,15 @@ public class JewelBlue extends LinearOpMode
         DriveBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Arm.setPosition(0);
         Phone.setPosition(0);
-
+        VuCentre = false;
+        VuRight = false;
+        VuLeft = false;
 
         colorC = hardwareMap.i2cDevice.get("cc");
         color_C_reader = new I2cDeviceSynchImpl(colorC,I2cAddr.create8bit(0x3c),false);
         color_C_reader.engage();
 
-        RightArm.setPosition(0.9);
-        LeftArm.setPosition(0.1);
+
 
         sensorGyro = hardwareMap.gyroSensor.get("gyro");
         mrGyro = (ModernRoboticsI2cGyro) sensorGyro;
@@ -110,12 +129,13 @@ public class JewelBlue extends LinearOpMode
 
         RightArm.setPosition(0.9);
         LeftArm.setPosition(0.1);
+
     }
 
 
     public void AfterWaitForStart()
     {
-           while (mrGyro.isCalibrating()) {}
+        while (mrGyro.isCalibrating()) {}
         runtime.reset();
     }
 
@@ -127,31 +147,31 @@ public class JewelBlue extends LinearOpMode
 
     }
 
-     public void GyroTurn(int target, double TurnSpeed) {
-            zAccumulated = mrGyro.getIntegratedZValue();
-            while (Math.abs(zAccumulated - target) > 3 && opModeIsActive()) {
-                if (zAccumulated > target) {
-                    DriveFrontLeft.setPower(TurnSpeed);
-                    DriveFrontRight.setPower(-TurnSpeed);
-                    DriveBackLeft.setPower(TurnSpeed);
-                    DriveBackRight.setPower(-TurnSpeed);
-                }
-
-                if (zAccumulated < target) {
-                    DriveFrontLeft.setPower(-TurnSpeed);
-                    DriveFrontRight.setPower(TurnSpeed);
-                    DriveBackLeft.setPower(-TurnSpeed);
-                    DriveBackRight.setPower(TurnSpeed);
-                }
-                zAccumulated = mrGyro.getIntegratedZValue();
-                telemetry.addData("accu", String.format("%03d", zAccumulated));
-                telemetry.update();
+    public void GyroTurn(int target, double TurnSpeed) {
+        zAccumulated = mrGyro.getIntegratedZValue();
+        while (Math.abs(zAccumulated - target) !=0 && opModeIsActive()) {
+            if (zAccumulated > target) {
+                DriveFrontLeft.setPower(TurnSpeed);
+                DriveFrontRight.setPower(-TurnSpeed);
+                DriveBackLeft.setPower(TurnSpeed);
+                DriveBackRight.setPower(-TurnSpeed);
             }
-            DriveFrontLeft.setPower(0);
-            DriveFrontRight.setPower(0);
-            DriveBackLeft.setPower(0);
-            DriveBackRight.setPower(0);
+
+            if (zAccumulated < target) {
+                DriveFrontLeft.setPower(-TurnSpeed);
+                DriveFrontRight.setPower(TurnSpeed);
+                DriveBackLeft.setPower(-TurnSpeed);
+                DriveBackRight.setPower(TurnSpeed);
+            }
+            zAccumulated = mrGyro.getIntegratedZValue();
+            telemetry.addData("accu", String.format("%03d", zAccumulated));
+            telemetry.update();
         }
+        DriveFrontLeft.setPower(0);
+        DriveFrontRight.setPower(0);
+        DriveBackLeft.setPower(0);
+        DriveBackRight.setPower(0);
+    }
     private void DriveForward(double power) {
 
         DriveFrontLeft.setPower(power);
@@ -169,41 +189,41 @@ public class JewelBlue extends LinearOpMode
         DriveFrontRight.setPower(0);
     }
 
-        public void Drive(int distance, double power){
+    public void Drive(int distance, double power){
 
-                // Reset encoders
-                DriveFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                DriveBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                DriveBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                DriveFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        // Reset encoders
+        DriveFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        DriveBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        DriveBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        DriveFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-                // Change to run to position prior to setting target
-                // Run to position
-            DriveFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            DriveBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            DriveBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            DriveFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        // Change to run to position prior to setting target
+        // Run to position
+        DriveFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        DriveBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        DriveBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        DriveFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                // Set target position
-            DriveFrontLeft.setTargetPosition(distance);
-            DriveBackLeft.setTargetPosition(distance);
-            DriveBackRight.setTargetPosition(distance);
-            DriveFrontRight.setTargetPosition(distance);
+        // Set target position
+        DriveFrontLeft.setTargetPosition(distance);
+        DriveBackLeft.setTargetPosition(distance);
+        DriveBackRight.setTargetPosition(distance);
+        DriveFrontRight.setTargetPosition(distance);
 
-                // Set drive power
-                DriveForward(power);
+        // Set drive power
+        DriveForward(power);
 
-                // wait until position is reached
-                while (opModeIsActive() && DriveFrontLeft.isBusy() && DriveFrontRight.isBusy()) idle();
+        // wait until position is reached
+        while (opModeIsActive() && DriveFrontLeft.isBusy() && DriveFrontRight.isBusy()) idle();
 
-                //stopRobot and change modes back to normal
-                stopRobot();
-            DriveFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            DriveBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            DriveBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            DriveFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //stopRobot and change modes back to normal
+        stopRobot();
+        DriveFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        DriveBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        DriveBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        DriveFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        }
+    }
 
     public void DriveForwardGyro(int distance, double power){
         double leftSpeed; //Power to feed the motors
@@ -253,19 +273,21 @@ public class JewelBlue extends LinearOpMode
         } else {
             Colour = "Red";
         }
-        if (Colour.matches("Blue")){
-            telemetry.addData("Blue", "%s visible");
-            telemetry.update();
-            GyroTurn(-15,0.1);
-            Thread.sleep(1000);
-            GyroTurn(3,0.1);
-        }
         if (Colour.matches("Red")){
             telemetry.addData("Red", "%s visible");
             telemetry.update();
+            //DriveForwardGyro(-300,-0.1);
+            GyroTurn(-15,0.1);
+            Thread.sleep(1000);
+            GyroTurn(0,0.1);
+        }
+        if (Colour.matches("Blue")){
+            telemetry.addData("Blue", "%s visible");
+            telemetry.update();
+            //DriveForwardGyro(300,0.1);
             GyroTurn(15,0.1);
             Thread.sleep(1000);
-            GyroTurn(-3,0.1);
+            GyroTurn(0,0.1);
         }
     }
 
@@ -273,35 +295,32 @@ public class JewelBlue extends LinearOpMode
 
         RightArm.setPosition(0.5);
         LeftArm.setPosition(0.5);
-        GlyphMotor(1000,1);
+        GlyphMotor(800,1);
 
     }
 
-  /*  public void VuLogic(){
+    public void VuLogic(){
         if (VuLeft == true){
-            PillarsToBePassed = 1;
+            PillarsToBePassed = 3;
             telemetry.addData("Pillars to be passed:","3");
             telemetry.update();
-            DriveToRangeAngle = -85;
         }
         if (VuCentre == true){
             PillarsToBePassed = 2;
             telemetry.addData("Pillars to be passed:","2");
             telemetry.update();
-            DriveToRangeAngle = -110;
         }
         if (VuRight == true){
-            PillarsToBePassed = 3;
+            PillarsToBePassed = 1;
             telemetry.addData("Pillars to be passed:","1");
             telemetry.update();
-            DriveToRangeAngle = -80;
         }
         else{
             PillarsToBePassed = 1;
             telemetry.addData("Error", "%s visible", "Don't know how many pillars to be passed");
         }
     }
-    */public void Range() throws InterruptedException {
+    public void Range() throws InterruptedException {
 
         rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "sensor_range_test");
         while (Pillars != PillarsToBePassed ) {
@@ -325,25 +344,25 @@ public class JewelBlue extends LinearOpMode
     public void GlyphMotor(int distance, double power){
 
 
-            // Reset encoders
+        // Reset encoders
         Glyph.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            // Change to run to position prior to setting target
-            // Run to position
+        // Change to run to position prior to setting target
+        // Run to position
 
         Glyph.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            // Set target position
+        // Set target position
         Glyph.setTargetPosition(distance);
 
 
-            // Set drive power
+        // Set drive power
         Glyph.setPower(0.2);
 
-            // wait until position is reached
-            while (opModeIsActive() && Glyph.isBusy() ) idle();
+        // wait until position is reached
+        while (opModeIsActive() && Glyph.isBusy() ) idle();
 
-            //stopRobot and change modes back to normal
+        //stopRobot and change modes back to normal
         Glyph.setPower(0);
 
         Glyph.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -351,62 +370,18 @@ public class JewelBlue extends LinearOpMode
 
     }
 
-
     public void DriveGyroToRange(double power) throws InterruptedException {
 
         rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "sensor_range_test");
-            double ExtraSpeed = 0;
-            double leftSpeed; //Power to feed the motors
-            double rightSpeed;
-            double target = mrGyro.getIntegratedZValue();  //Starting direction
-        Pillars = 0;
-        PillarsToBePassed = 1;
-        ExtraSpeed = 0.1;
-        while (Pillars != PillarsToBePassed ) {  //While we have not passed out intended distance
-                zAccumulated = mrGyro.getIntegratedZValue();  //Current direction
-                leftSpeed = power + (zAccumulated - target) / 100;  //Calculate speed for each side
-                rightSpeed = (power - (zAccumulated - target) / 100);  //See Gyro Straight video for detailed explanation
-                leftSpeed = Range.clip(leftSpeed, -1, 1);
-                rightSpeed = Range.clip(rightSpeed, -1, 1);
-                DriveFrontLeft.setPower(leftSpeed);
-                DriveBackLeft.setPower(leftSpeed);
-                DriveBackRight.setPower(rightSpeed);
-                DriveFrontRight.setPower(rightSpeed);
-                telemetry.addData("1. Left", DriveFrontLeft.getPower());
-                telemetry.addData("2. Right", DriveFrontRight.getPower());
-                telemetry.addData("3. Left Power Var",leftSpeed);
-                telemetry.addData("4. Right Power Var",rightSpeed);
-                telemetry.update();
-            if (rangeSensor.rawUltrasonic() < 17) {
-                Pillars = 1;
-                telemetry.addData("Pillars Passed:",Pillars);
-                telemetry.addData("Distance:", rangeSensor.getDistance(DistanceUnit.CM));
-                telemetry.update();
-
-            }
-            }
-
-            DriveFrontLeft.setPower(0);
-            DriveBackLeft.setPower(0);
-            DriveBackRight.setPower(0);
-            DriveFrontRight.setPower(0);
-        }
-
-
-    public void DriveBackGyroToRange(double power) throws InterruptedException {
-
-        rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "sensor_range_test");
-        double ExtraSpeed = 0;
         double leftSpeed; //Power to feed the motors
         double rightSpeed;
         double target = mrGyro.getIntegratedZValue();  //Starting direction
         Pillars = 0;
-   //     PillarsToBePassed = PillarsToBePassed + 1;
-        ExtraSpeed = 0.1;
+
         while (Pillars != PillarsToBePassed ) {  //While we have not passed out intended distance
             zAccumulated = mrGyro.getIntegratedZValue();  //Current direction
             leftSpeed = power + (zAccumulated - target) / 100;  //Calculate speed for each side
-            rightSpeed = (power - (zAccumulated - target) / 100)-ExtraSpeed;  //See Gyro Straight video for detailed explanation
+            rightSpeed = power - (zAccumulated - target) / 100;  //See Gyro Straight video for detailed explanation
             leftSpeed = Range.clip(leftSpeed, -1, 1);
             rightSpeed = Range.clip(rightSpeed, -1, 1);
             DriveFrontLeft.setPower(leftSpeed);
@@ -417,13 +392,47 @@ public class JewelBlue extends LinearOpMode
             telemetry.addData("2. Right", DriveFrontRight.getPower());
             telemetry.addData("3. Left Power Var",leftSpeed);
             telemetry.addData("4. Right Power Var",rightSpeed);
+            telemetry.addData("4. Right Power Var",rangeSensor.getDistance(DistanceUnit.CM));
             telemetry.update();
-            if (rangeSensor.rawUltrasonic() < 17) {
+            if (rangeSensor.rawUltrasonic() < 15) {
                 Pillars = Pillars+1 ;
                 telemetry.addData("Pillars Passed:",Pillars);
                 telemetry.addData("Distance:", rangeSensor.getDistance(DistanceUnit.CM));
                 telemetry.update();
-                Thread.sleep(1000);
+                Thread.sleep(500);
+            }
+        }
+
+        DriveFrontLeft.setPower(0);
+        DriveBackLeft.setPower(0);
+        DriveBackRight.setPower(0);
+        DriveFrontRight.setPower(0);
+    }
+
+    public void DriveToRange(double power) throws InterruptedException {
+
+        rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "sensor_range_test");
+        double leftSpeed; //Power to feed the motors
+        double rightSpeed;
+        double target = mrGyro.getIntegratedZValue();  //Starting direction
+        Pillars = 0;
+
+        while (Pillars != PillarsToBePassed ) {  //While we have not passed out intended distance
+
+
+            DriveFrontLeft.setPower(power);
+            DriveBackLeft.setPower(power);
+            DriveBackRight.setPower(power);
+            DriveFrontRight.setPower(power);
+            telemetry.addData("1. Left", DriveFrontLeft.getPower());
+            telemetry.addData("2. Right", DriveFrontRight.getPower());
+            telemetry.update();
+            if (rangeSensor.rawUltrasonic() < 16) {
+                Pillars = Pillars+1 ;
+                telemetry.addData("Pillars Passed:",Pillars);
+                telemetry.addData("Distance:", rangeSensor.getDistance(DistanceUnit.CM));
+                telemetry.update();
+                Thread.sleep(500);
             }
         }
 
@@ -434,34 +443,34 @@ public class JewelBlue extends LinearOpMode
     }
 
 
-        public void DropGlyph(){
-            RightArm.setPosition(0.9);
-            LeftArm.setPosition(0.1);
-            GlyphMotor(-800,-1);
-        }
+    public void DropGlyph(){
+        RightArm.setPosition(0.9);
+        LeftArm.setPosition(0.1);
+        GlyphMotor(-700,-1);
+    }
 
 
-        public void DriveOffStone(double Speed) throws InterruptedException {
+    public void DriveOffStone(double Speed) throws InterruptedException {
+        DriveFrontLeft.setPower(Speed);
+        DriveBackLeft.setPower(Speed);
+        DriveBackRight.setPower(Speed);
+        DriveFrontRight.setPower(Speed);
+        Thread.sleep(250);
+        while ((GyroX != 0) && opModeIsActive()) {
+            GyroX = mrGyro.rawX();
             DriveFrontLeft.setPower(Speed);
             DriveBackLeft.setPower(Speed);
             DriveBackRight.setPower(Speed);
             DriveFrontRight.setPower(Speed);
-            Thread.sleep(250);
-            while ((GyroX != 0) && opModeIsActive()) {
-                GyroX = mrGyro.rawX();
-                DriveFrontLeft.setPower(Speed);
-                DriveBackLeft.setPower(Speed);
-                DriveBackRight.setPower(Speed);
-                DriveFrontRight.setPower(Speed);
-            }
-
-
-            DriveFrontLeft.setPower(0);
-            DriveBackLeft.setPower(0);
-            DriveBackRight.setPower(0);
-            DriveFrontRight.setPower(0);
-
         }
+
+
+        DriveFrontLeft.setPower(0);
+        DriveBackLeft.setPower(0);
+        DriveBackRight.setPower(0);
+        DriveFrontRight.setPower(0);
+
+    }
 }
 
 
