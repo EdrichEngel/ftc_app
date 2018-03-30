@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Main;
+/*package org.firstinspires.ftc.teamcode.Main;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
@@ -11,7 +11,9 @@ import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMetaAndClass;
 /**
  * Created by Edrich on 2018/02/27.
  */
+/*
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
+@Disabled
 public class MainTeleOp extends OpMode {// Declare Motors
     DcMotor DriveFrontLeft;
     DcMotor DriveFrontRight;
@@ -31,9 +33,9 @@ public class MainTeleOp extends OpMode {// Declare Motors
     public double Power;
     double GlyphSpeed = 1;
 
-    double FR_M = 1;
+    double FR_M = -1;
     double FL_M = 0.9;
-    double BL_M = 0.9;
+    double BL_M = -0.9;
     double BR_M = 1;
 
     double FrontRight = 0;
@@ -84,7 +86,7 @@ public class MainTeleOp extends OpMode {// Declare Motors
         Glyph.setPower(0);
         Extending.setPower(0);
 // Set the starting position(angle) of the servo
-        Phone.setPosition(1);
+        Phone.setPosition(0);
         LeftArm.setPosition(0);
         RightArm.setPosition(1);
         Jewel.setPosition(0);
@@ -124,42 +126,38 @@ public class MainTeleOp extends OpMode {// Declare Motors
 
     //region Omnidirectional_Steering
     public void front_right(double power) {
-        FrontRight = power * FR_M;
+        DriveFrontRight.setPower(power * FR_M);
     }
 
     public void front_left(double power) {
-        FrontLeft = power * FL_M;
+        DriveFrontLeft.setPower(power * FL_M);
     }
 
     public void back_left(double power) {
-        BackLeft = power * BL_M;
+        DriveBackLeft.setPower(power * BL_M);
     }
 
     public void back_right(double power) {
-        BackRight = power * BR_M;
+        DriveBackRight.setPower(power * BR_M);
     }
 
 
-    public void update_bumper_status() { //checks details for rotating
-        if (gamepad1.left_trigger > 0 || gamepad1.right_trigger > 0) { //checks if any bumper is active
-            if (gamepad1.left_trigger == 0 || gamepad1.right_trigger == 0) { //checks that both bumpers aren't simultaneously pressed
-                rotate = true; //updates boolean to choose which method is run
-                if (gamepad1.right_trigger > 0) {                              // below code determines and sets the direction of rotation
-                    rot_dir = 1;
-                    rot_power = (double) gamepad1.right_trigger;
-                } else {
-                    rot_dir = 0;
-                    rot_power = (double) gamepad1.left_trigger;
-                }
+    public void update_rightS_status() { //checks details for rotating
+        if (gamepad1.right_stick_x != 0) { //checks if any bumper is active
+          rotate = true; //updates boolean to choose which method is run
+            if (gamepad1.right_stick_x > 0) {// below code determines and sets the direction of rotation
+                rot_dir = 1;
+                rot_power = (double) gamepad1.right_trigger;
             } else {
-                rotate = false;
+                rot_dir = 0;
+                rot_power = (double) -gamepad1.left_trigger;
             }
         } else {
             rotate = false;
         }//rotate = false ensures that the rotate method does not run
     }
 
-    public void update_stick_status() {//determines whether movement in a direction is input from sticks to choose running method
+    public void update_leftS_status() {//determines whether movement in a direction is input from sticks to choose running method
         if (gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0) {
             stick = true;
         } else {
@@ -233,9 +231,9 @@ public class MainTeleOp extends OpMode {// Declare Motors
         back_right(0.5 * ((vect_y * M) + (rot_power * right_rot_dir[rot_dir])));
     }
 
-    public void Omnidirection_Steerining_Loop() {
-        update_stick_status();
-        update_bumper_status();
+    public void Omnidirectional_Steering() {
+        update_leftS_status();
+        update_rightS_status();
 
         if (!stick && !rotate) {
             OM_Null();
@@ -251,33 +249,54 @@ public class MainTeleOp extends OpMode {// Declare Motors
         }
     }
 
-    public void Omnidirectional_Steering() {
-
-        Omnidirection_Steerining_Loop();
-//custom power methods are used first to avoid wet code when writing changing the motor power with variables.
-// Some motors are slightly more or less powerfull, therefor we need a method
-        DriveFrontRight.setPower(FrontRight);
-        DriveFrontLeft.setPower(FrontLeft);
-        DriveBackLeft.setPower(BackLeft);
-        DriveBackRight.setPower(BackRight);
-    }
     //endregion
 
+    //region Driver1_Non-Steering
 
+    public void Gamepad1_Controls(){
 
-    @Override
-    public void loop() {
+        if(gamepad1.right_bumper){RightArm.setPosition(0.90);}//right arm closed
+        if(gamepad1.right_trigger > 0){RightArm.setPosition(.55);}//right arm open
 
+        if(gamepad1.left_bumper){LeftArm.setPosition(0.1);}//right arm closed
+        if(gamepad1.left_trigger > 0){LeftArm.setPosition(0.45);}//right arm open
 
-        //region Gamepad2
+        if (gamepad2.x){// Completely close clyph arms
+            RightArm.setPosition(0.9);
+            LeftArm.setPosition(0.1);
+        }
 
+        if (gamepad2.b){// 60° angle clyph arms
+            RightArm.setPosition(0.5);
+            LeftArm.setPosition(0.5);
+        }
 
-        while(gamepad2.dpad_up)
+        if (gamepad2.a){// Release Glyph. Arms are bearly open
+            RightArm.setPosition(0.7);
+            LeftArm.setPosition(0.3);
+        }
+
+        if (gamepad2.y){
+            RightArm.setPosition(0.55);
+            LeftArm.setPosition(0.45);
+        }
+    }
+
+    public void Gamepad1_Elevator_Controls(){
+        ToDoElevatorServo.setPower(gamepad1.left_stick_y);
+    }
+
+    //endregion
+
+    //region Gamepad2
+
+    public void Gamepad2(){
+        while (gamepad2.dpad_up)
 
         {
             Glyph.setPower(1 * GlyphSpeed);
         }
-        while(gamepad2.dpad_down)
+        while (gamepad2.dpad_down)
 
         {
             Glyph.setPower(-1 * GlyphSpeed);
@@ -287,7 +306,7 @@ public class MainTeleOp extends OpMode {// Declare Motors
 
 
 // Completely open clyph arms
-        if(gamepad2.x)
+        if (gamepad2.x)
 
         {
 
@@ -296,7 +315,7 @@ public class MainTeleOp extends OpMode {// Declare Motors
         }
 
 // Completely close clyph arms
-        if(gamepad2.b)
+        if (gamepad2.b)
 
         {
 
@@ -305,7 +324,7 @@ public class MainTeleOp extends OpMode {// Declare Motors
         }
 
 // 60° angle clyph arms
-        if(gamepad2.a)
+        if (gamepad2.a)
 
         {
 
@@ -314,7 +333,7 @@ public class MainTeleOp extends OpMode {// Declare Motors
         }
 
 // Release Glyph. Arms are bearly open
-        if(gamepad2.y)
+        if (gamepad2.y)
 
         {
 
@@ -322,13 +341,13 @@ public class MainTeleOp extends OpMode {// Declare Motors
             LeftArm.setPosition(0.45);
         }
 // Double lock to ensure that we don't accidentally release the relic
-        if((gamepad2.left_trigger >0.5)&&(gamepad2.right_trigger >0.5))
+        if ((gamepad2.left_trigger > 0.5) && (gamepad2.right_trigger > 0.5))
 
         {
             RelicClaw.setPosition(0.2);
         }
 // Close Relic claw
-        if(gamepad2.dpad_right)
+        if (gamepad2.dpad_right)
 
         {
             RelicClaw.setPosition(0);
@@ -338,16 +357,14 @@ public class MainTeleOp extends OpMode {// Declare Motors
 
         Extending.setPower(gamepad2.left_stick_y);
 
-        Arm.setPower(gamepad2.right_stick_y*Power);
+        Arm.setPower(gamepad2.right_stick_y * Power);
 
-        if(gamepad2.left_bumper)
-        {
+        if (gamepad2.left_bumper) {
             Power = 0.3;
             telemetry.addData("Power:", Power);
             telemetry.update();
         }
-        if(gamepad2.right_bumper)
-        {
+        if (gamepad2.right_bumper) {
             Power = 0.4;
             telemetry.addData("Power:", Power);
             telemetry.update();
@@ -368,18 +385,32 @@ public class MainTeleOp extends OpMode {// Declare Motors
 
 // Change the speed controll variable  for the drive motor multiplier.
 
-
+/*
         if (gamepad1.back) {
             SpeedControl = 0.4;
         }
         if (gamepad1.start) {
             SpeedControl = 1;
         }
+    }
 
-        if (gamepad1.dpad_left && !gamepad1.dpad_right){Selected = 0;}else
-        if (!gamepad1.dpad_left && gamepad1.dpad_right){Selected = 1;}
+    //endregion
 
-        if (Selected == 0){Tank_Drive();}else{Omnidirectional_Steering();}
+    @Override
+    public void loop() {
+
+        Gamepad2();
+        Gamepad1_Controls();
+
+        if (gamepad1.dpad_left && !gamepad1.dpad_up && !gamepad1.dpad_right){Selected = 0;}else
+        if (!gamepad1.dpad_left && gamepad1.dpad_up && !gamepad1.dpad_right){Selected = 1;}else
+        if (!gamepad1.dpad_left && !gamepad1.dpad_up && gamepad1.dpad_right){Selected = 2;}
+
+        if      (Selected == 0){Tank_Drive();}
+        else if (Selected == 2){OM_Null();Gamepad1_Elevator_Controls();}
+        else if (Selected == 3){Omnidirectional_Steering();}
+
     }
 
 }
+*/

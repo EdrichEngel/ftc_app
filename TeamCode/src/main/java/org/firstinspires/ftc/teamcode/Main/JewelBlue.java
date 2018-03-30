@@ -1,13 +1,9 @@
 package org.firstinspires.ftc.teamcode.Main;
 
 
-import android.opengl.GLU;
-import android.os.Trace;
-
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -16,45 +12,31 @@ import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.I2cDevice;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchImpl;
-import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+
 
 /**
  * Created by Edrich on 9/23/2017.
  */
 
-@Autonomous(name = "Red1", group = "Red")
+@Autonomous(name = "BlueJewel", group = "Blue")
 //@Disabled
-public class AutoOpRed1 extends LinearOpMode
+public class JewelBlue extends LinearOpMode
 {
     DcMotor DriveFrontLeft;
     DcMotor DriveFrontRight;
     DcMotor DriveBackLeft;
     DcMotor DriveBackRight;
     DcMotor Glyph;
-    Servo Jewel;
+    Servo Arm;
     Servo Phone;
     Servo RightArm;
     Servo LeftArm;
-    String StringVuForia;
-    boolean VuLeft;
-    boolean VuCentre;
-    boolean VuRight;
+
     String Colour;
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime timer = new ElapsedTime();
@@ -68,102 +50,26 @@ public class AutoOpRed1 extends LinearOpMode
     private byte[] colorCcache;
     double Pillars;
     double GyroX;
+    int DriveToRangeAngle;
 
 
 
 
     ModernRoboticsI2cRangeSensor rangeSensor;
 
-    double VuforiaActive = 1;
-    private RelicRecoveryVuMark FoundVumark;
-    private RelicRecoveryVuMark DecodedMessage;
-    public static final String TAG = "Vuforia VuMark Sample";
-    VuforiaLocalizer vuforia;
 
     @Override
     public void runOpMode() throws InterruptedException {
         InitSystem();
-    /*    int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
-        parameters.vuforiaLicenseKey = "AUO3EHb/////AAAAGSI5YtsUZUnXmqs2hS+aWDczQOW35bYvHctTDIwu8Cri2uQQQMF806Y9y19+y/tRwcx7BcTtmonYebC+34yGbTFKEYk7WKScXsAsdkb0F+D36udYE0b4Y5ytuFgzFoimN7gLa4P2xhrgfuBjgBJtDIhVlDECMiQaASZBdrUUHPIDDLe8BLQ0Pqa/tj4D6L4Lr68Pwr/PR4JYov8NncvJtdG7WvDtJFY4fqRGWCoLPwvAkvmDUmoTRlovnpiyDpdn0mhaLIY7baSn0VspvIoxY8utZgjOpsOF3WJM88GVaijqus5p1j47aNFJtPOGYfwaSEjiHUbigyohkcsTAg65Bl2469QJNTScnuwk1jAWtXJj";
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
-        this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
-        VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
-        VuforiaTrackable relicTemplate = relicTrackables.get(0);
-        relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
-        telemetry.addData(">", "Press Play to start");
-        telemetry.update();
+    mrGyro.resetZAxisIntegrator();
         waitForStart();
-        relicTrackables.activate();
-      */
-        waitForStart();
-        mrGyro.resetZAxisIntegrator();
-        AfterWaitForStart();
-
-
-
-
+    AfterWaitForStart();
         while (opModeIsActive()) {
-
-
-        /*    while (VuforiaActive == 1) {
-                Phone.setPosition(0.95);
-                com.vuforia.CameraDevice.getInstance().setFlashTorchMode(true);
-                RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
-                if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
-                    telemetry.addData("VuMark", "%s visible", vuMark);
-                    FoundVumark = vuMark;
-                    RelicRecoveryVuMark DecodedMessage = RelicRecoveryVuMark.from(relicTemplate);
-
-                    VuforiaActive = 0;
-                    if (DecodedMessage.equals(RelicRecoveryVuMark.CENTER)) {
-                        VuCentre = true;
-                        VuLeft = false;
-                        VuRight = false;
-                    }
-                    if (DecodedMessage.equals(RelicRecoveryVuMark.LEFT)) {
-                        VuCentre = false;
-                        VuLeft = true;
-                        VuRight = false;
-                    }
-                    if (DecodedMessage.equals(RelicRecoveryVuMark.RIGHT)) {
-                        VuCentre = false;
-                        VuLeft = false;
-                        VuRight = true;
-
-                    }
-                } else {
-                    telemetry.addData("VuMark", "not visible");
-                }
-                telemetry.update();
-            }
-            telemetry.addData("VuRight:",VuRight);
-            telemetry.addData("VuLeft:",VuLeft);
-            telemetry.addData("VuCentre:",VuCentre);
-            telemetry.update();
-
-        */  VuRight = true;
-            VuLogic();
-            com.vuforia.CameraDevice.getInstance().setFlashTorchMode(false);
-            Phone.setPosition(0);
-            GlyphPickUp();
             Jewel();
-            telemetry.addData("Pillars to be passed:",PillarsToBePassed);
-            telemetry.update();
-            Thread.sleep(500);
-            Jewel.setPosition(0.1);
-            Thread.sleep(1000);
-            DriveGyroToRange(0.3);
-            PillarsToBePassed = 1;
-            DriveGyroToRange(-0.1);
-            GyroTurn(-70, 0.2);
-            Drive(400, 0.1);
-            DropGlyph();
-            Drive(-300, 0.3);
             stop();
-
         }
     }
+
 
 
     public void InitSystem() {
@@ -174,7 +80,7 @@ public class AutoOpRed1 extends LinearOpMode
         DriveBackLeft = hardwareMap.dcMotor.get("DriveBackLeft");
         DriveBackRight = hardwareMap.dcMotor.get("DriveBackRight");
         Glyph = hardwareMap.dcMotor.get("Glyph");
-        Jewel = hardwareMap.servo.get("ServoArm");
+        Arm = hardwareMap.servo.get("ServoArm");
         Phone = hardwareMap.servo.get("Phone");
         RightArm = hardwareMap.servo.get("RightArm");
         LeftArm =hardwareMap.servo.get("LeftArm");
@@ -185,17 +91,16 @@ public class AutoOpRed1 extends LinearOpMode
         DriveFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         DriveBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         DriveBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Jewel.setPosition(0);
+        Arm.setPosition(0);
         Phone.setPosition(0);
-        VuCentre = false;
-        VuRight = false;
-        VuLeft = false;
+
 
         colorC = hardwareMap.i2cDevice.get("cc");
         color_C_reader = new I2cDeviceSynchImpl(colorC,I2cAddr.create8bit(0x3c),false);
         color_C_reader.engage();
 
-
+        RightArm.setPosition(0.9);
+        LeftArm.setPosition(0.1);
 
         sensorGyro = hardwareMap.gyroSensor.get("gyro");
         mrGyro = (ModernRoboticsI2cGyro) sensorGyro;
@@ -224,7 +129,7 @@ public class AutoOpRed1 extends LinearOpMode
 
      public void GyroTurn(int target, double TurnSpeed) {
             zAccumulated = mrGyro.getIntegratedZValue();
-            while (Math.abs(zAccumulated - target) !=0 && opModeIsActive()) {
+            while (Math.abs(zAccumulated - target) > 3 && opModeIsActive()) {
                 if (zAccumulated > target) {
                     DriveFrontLeft.setPower(TurnSpeed);
                     DriveFrontRight.setPower(-TurnSpeed);
@@ -340,7 +245,7 @@ public class AutoOpRed1 extends LinearOpMode
 
         color_C_reader = new I2cDeviceSynchImpl(colorC,I2cAddr.create8bit(0x3c),false);
         color_C_reader.engage();
-        Jewel.setPosition(0.45);
+        Arm.setPosition(0.45);
         Thread.sleep(1000);
         colorCcache = color_C_reader.read(0x04,1);
         if (colorCcache[0] < 7) {
@@ -348,21 +253,19 @@ public class AutoOpRed1 extends LinearOpMode
         } else {
             Colour = "Red";
         }
-        if (Colour.matches("Red")){
-            telemetry.addData("Red", "%s visible");
-            telemetry.update();
-            //DriveForwardGyro(-300,-0.1);
-            GyroTurn(-15,0.1);
-            Thread.sleep(1000);
-            GyroTurn(0,0.1);
-        }
         if (Colour.matches("Blue")){
             telemetry.addData("Blue", "%s visible");
             telemetry.update();
-            //DriveForwardGyro(300,0.1);
+            GyroTurn(-15,0.1);
+            Thread.sleep(1000);
+            GyroTurn(3,0.1);
+        }
+        if (Colour.matches("Red")){
+            telemetry.addData("Red", "%s visible");
+            telemetry.update();
             GyroTurn(15,0.1);
             Thread.sleep(1000);
-            GyroTurn(0,0.1);
+            GyroTurn(-3,0.1);
         }
     }
 
@@ -374,28 +277,31 @@ public class AutoOpRed1 extends LinearOpMode
 
     }
 
-    public void VuLogic(){
+  /*  public void VuLogic(){
         if (VuLeft == true){
-            PillarsToBePassed = 3;
+            PillarsToBePassed = 1;
             telemetry.addData("Pillars to be passed:","3");
             telemetry.update();
+            DriveToRangeAngle = -85;
         }
-        else if (VuCentre == true){
+        if (VuCentre == true){
             PillarsToBePassed = 2;
             telemetry.addData("Pillars to be passed:","2");
             telemetry.update();
+            DriveToRangeAngle = -110;
         }
-        else if (VuRight == true){
-            PillarsToBePassed = 1;
+        if (VuRight == true){
+            PillarsToBePassed = 3;
             telemetry.addData("Pillars to be passed:","1");
             telemetry.update();
+            DriveToRangeAngle = -80;
         }
         else{
             PillarsToBePassed = 1;
             telemetry.addData("Error", "%s visible", "Don't know how many pillars to be passed");
         }
     }
-    public void Range() throws InterruptedException {
+    */public void Range() throws InterruptedException {
 
         rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "sensor_range_test");
         while (Pillars != PillarsToBePassed ) {
@@ -445,18 +351,21 @@ public class AutoOpRed1 extends LinearOpMode
 
     }
 
+
     public void DriveGyroToRange(double power) throws InterruptedException {
 
         rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "sensor_range_test");
+            double ExtraSpeed = 0;
             double leftSpeed; //Power to feed the motors
             double rightSpeed;
             double target = mrGyro.getIntegratedZValue();  //Starting direction
         Pillars = 0;
-
+        PillarsToBePassed = 1;
+        ExtraSpeed = 0.1;
         while (Pillars != PillarsToBePassed ) {  //While we have not passed out intended distance
                 zAccumulated = mrGyro.getIntegratedZValue();  //Current direction
                 leftSpeed = power + (zAccumulated - target) / 100;  //Calculate speed for each side
-                rightSpeed = (power - (zAccumulated - target) / 100)+0.1;  //See Gyro Straight video for detailed explanation
+                rightSpeed = (power - (zAccumulated - target) / 100);  //See Gyro Straight video for detailed explanation
                 leftSpeed = Range.clip(leftSpeed, -1, 1);
                 rightSpeed = Range.clip(rightSpeed, -1, 1);
                 DriveFrontLeft.setPower(leftSpeed);
@@ -467,14 +376,13 @@ public class AutoOpRed1 extends LinearOpMode
                 telemetry.addData("2. Right", DriveFrontRight.getPower());
                 telemetry.addData("3. Left Power Var",leftSpeed);
                 telemetry.addData("4. Right Power Var",rightSpeed);
-                telemetry.addData("4. Right Power Var",rangeSensor.getDistance(DistanceUnit.CM));
                 telemetry.update();
-            if (rangeSensor.rawUltrasonic() < 15) {
-                Pillars = Pillars+1 ;
+            if (rangeSensor.rawUltrasonic() < 17) {
+                Pillars = 1;
                 telemetry.addData("Pillars Passed:",Pillars);
                 telemetry.addData("Distance:", rangeSensor.getDistance(DistanceUnit.CM));
                 telemetry.update();
-                Thread.sleep(500);
+
             }
             }
 
@@ -484,30 +392,38 @@ public class AutoOpRed1 extends LinearOpMode
             DriveFrontRight.setPower(0);
         }
 
-    public void DriveToRange(double power) throws InterruptedException {
+
+    public void DriveBackGyroToRange(double power) throws InterruptedException {
 
         rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "sensor_range_test");
+        double ExtraSpeed = 0;
         double leftSpeed; //Power to feed the motors
         double rightSpeed;
         double target = mrGyro.getIntegratedZValue();  //Starting direction
         Pillars = 0;
-
+   //     PillarsToBePassed = PillarsToBePassed + 1;
+        ExtraSpeed = 0.1;
         while (Pillars != PillarsToBePassed ) {  //While we have not passed out intended distance
-
-
-            DriveFrontLeft.setPower(power);
-            DriveBackLeft.setPower(power);
-            DriveBackRight.setPower(power);
-            DriveFrontRight.setPower(power);
+            zAccumulated = mrGyro.getIntegratedZValue();  //Current direction
+            leftSpeed = power + (zAccumulated - target) / 100;  //Calculate speed for each side
+            rightSpeed = (power - (zAccumulated - target) / 100)-ExtraSpeed;  //See Gyro Straight video for detailed explanation
+            leftSpeed = Range.clip(leftSpeed, -1, 1);
+            rightSpeed = Range.clip(rightSpeed, -1, 1);
+            DriveFrontLeft.setPower(leftSpeed);
+            DriveBackLeft.setPower(leftSpeed);
+            DriveBackRight.setPower(rightSpeed);
+            DriveFrontRight.setPower(rightSpeed);
             telemetry.addData("1. Left", DriveFrontLeft.getPower());
             telemetry.addData("2. Right", DriveFrontRight.getPower());
+            telemetry.addData("3. Left Power Var",leftSpeed);
+            telemetry.addData("4. Right Power Var",rightSpeed);
             telemetry.update();
-            if (rangeSensor.rawUltrasonic() < 16) {
+            if (rangeSensor.rawUltrasonic() < 17) {
                 Pillars = Pillars+1 ;
                 telemetry.addData("Pillars Passed:",Pillars);
                 telemetry.addData("Distance:", rangeSensor.getDistance(DistanceUnit.CM));
                 telemetry.update();
-                Thread.sleep(500);
+                Thread.sleep(1000);
             }
         }
 
@@ -521,7 +437,7 @@ public class AutoOpRed1 extends LinearOpMode
         public void DropGlyph(){
             RightArm.setPosition(0.9);
             LeftArm.setPosition(0.1);
-            GlyphMotor(-900,-1);
+            GlyphMotor(-800,-1);
         }
 
 

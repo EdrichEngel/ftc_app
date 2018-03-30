@@ -23,6 +23,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+import org.firstinspires.ftc.robotcore.internal.android.dx.rop.code.TranslationAdvice;
 
 /**
  * Created by Edrich on 9/23/2017.
@@ -74,7 +75,7 @@ public class AutoOpBlue1 extends LinearOpMode
     @Override
     public void runOpMode() throws InterruptedException {
         InitSystem();
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+/*        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
         parameters.vuforiaLicenseKey = "AUO3EHb/////AAAAGSI5YtsUZUnXmqs2hS+aWDczQOW35bYvHctTDIwu8Cri2uQQQMF806Y9y19+y/tRwcx7BcTtmonYebC+34yGbTFKEYk7WKScXsAsdkb0F+D36udYE0b4Y5ytuFgzFoimN7gLa4P2xhrgfuBjgBJtDIhVlDECMiQaASZBdrUUHPIDDLe8BLQ0Pqa/tj4D6L4Lr68Pwr/PR4JYov8NncvJtdG7WvDtJFY4fqRGWCoLPwvAkvmDUmoTRlovnpiyDpdn0mhaLIY7baSn0VspvIoxY8utZgjOpsOF3WJM88GVaijqus5p1j47aNFJtPOGYfwaSEjiHUbigyohkcsTAg65Bl2469QJNTScnuwk1jAWtXJj";
         parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
@@ -86,14 +87,17 @@ public class AutoOpBlue1 extends LinearOpMode
         telemetry.update();
         waitForStart();
         relicTrackables.activate();
-        mrGyro.resetZAxisIntegrator();
+
+  */
+        waitForStart();
+mrGyro.resetZAxisIntegrator();
         AfterWaitForStart();
 
 
         while (opModeIsActive()) {
 
 
-            while (VuforiaActive == 1) {
+/*            while (VuforiaActive == 1) {
                 Phone.setPosition(0.97);
                 com.vuforia.CameraDevice.getInstance().setFlashTorchMode(true);
                 RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
@@ -118,15 +122,15 @@ public class AutoOpBlue1 extends LinearOpMode
                 telemetry.update();
             }
 
-
+*/
+            VuLeft = true;
             VuLogic();
-
             com.vuforia.CameraDevice.getInstance().setFlashTorchMode(false);
             Phone.setPosition(0);
             GlyphPickUp();
             Jewel();
             Arm.setPosition(0.1);
-            Thread.sleep(1000);
+            Thread.sleep(500);
             DriveBackGyroToRange(-0.3);
             PillarsToBePassed = 1;
             DriveGyroToRange(0.1);

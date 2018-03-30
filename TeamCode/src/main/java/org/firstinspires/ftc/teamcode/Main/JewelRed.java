@@ -1,13 +1,9 @@
 package org.firstinspires.ftc.teamcode.Main;
 
 
-import android.opengl.GLU;
-import android.os.Trace;
-
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -16,31 +12,19 @@ import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.I2cDevice;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchImpl;
-import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 /**
  * Created by Edrich on 9/23/2017.
  */
 
-@Autonomous(name = "Red1", group = "Red")
+@Autonomous(name = "JewelRed", group = "Red")
 //@Disabled
-public class AutoOpRed1 extends LinearOpMode
+public class JewelRed extends LinearOpMode
 {
     DcMotor DriveFrontLeft;
     DcMotor DriveFrontRight;
@@ -51,11 +35,7 @@ public class AutoOpRed1 extends LinearOpMode
     Servo Phone;
     Servo RightArm;
     Servo LeftArm;
-    String StringVuForia;
-    boolean VuLeft;
-    boolean VuCentre;
-    boolean VuRight;
-    String Colour;
+     String Colour;
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime timer = new ElapsedTime();
     int zAccumulated;
@@ -74,94 +54,16 @@ public class AutoOpRed1 extends LinearOpMode
 
     ModernRoboticsI2cRangeSensor rangeSensor;
 
-    double VuforiaActive = 1;
-    private RelicRecoveryVuMark FoundVumark;
-    private RelicRecoveryVuMark DecodedMessage;
-    public static final String TAG = "Vuforia VuMark Sample";
-    VuforiaLocalizer vuforia;
 
     @Override
     public void runOpMode() throws InterruptedException {
         InitSystem();
-    /*    int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
-        parameters.vuforiaLicenseKey = "AUO3EHb/////AAAAGSI5YtsUZUnXmqs2hS+aWDczQOW35bYvHctTDIwu8Cri2uQQQMF806Y9y19+y/tRwcx7BcTtmonYebC+34yGbTFKEYk7WKScXsAsdkb0F+D36udYE0b4Y5ytuFgzFoimN7gLa4P2xhrgfuBjgBJtDIhVlDECMiQaASZBdrUUHPIDDLe8BLQ0Pqa/tj4D6L4Lr68Pwr/PR4JYov8NncvJtdG7WvDtJFY4fqRGWCoLPwvAkvmDUmoTRlovnpiyDpdn0mhaLIY7baSn0VspvIoxY8utZgjOpsOF3WJM88GVaijqus5p1j47aNFJtPOGYfwaSEjiHUbigyohkcsTAg65Bl2469QJNTScnuwk1jAWtXJj";
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
-        this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
-        VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
-        VuforiaTrackable relicTemplate = relicTrackables.get(0);
-        relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
-        telemetry.addData(">", "Press Play to start");
-        telemetry.update();
-        waitForStart();
-        relicTrackables.activate();
-      */
-        waitForStart();
         mrGyro.resetZAxisIntegrator();
+        waitForStart();
         AfterWaitForStart();
-
-
-
-
         while (opModeIsActive()) {
-
-
-        /*    while (VuforiaActive == 1) {
-                Phone.setPosition(0.95);
-                com.vuforia.CameraDevice.getInstance().setFlashTorchMode(true);
-                RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
-                if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
-                    telemetry.addData("VuMark", "%s visible", vuMark);
-                    FoundVumark = vuMark;
-                    RelicRecoveryVuMark DecodedMessage = RelicRecoveryVuMark.from(relicTemplate);
-
-                    VuforiaActive = 0;
-                    if (DecodedMessage.equals(RelicRecoveryVuMark.CENTER)) {
-                        VuCentre = true;
-                        VuLeft = false;
-                        VuRight = false;
-                    }
-                    if (DecodedMessage.equals(RelicRecoveryVuMark.LEFT)) {
-                        VuCentre = false;
-                        VuLeft = true;
-                        VuRight = false;
-                    }
-                    if (DecodedMessage.equals(RelicRecoveryVuMark.RIGHT)) {
-                        VuCentre = false;
-                        VuLeft = false;
-                        VuRight = true;
-
-                    }
-                } else {
-                    telemetry.addData("VuMark", "not visible");
-                }
-                telemetry.update();
-            }
-            telemetry.addData("VuRight:",VuRight);
-            telemetry.addData("VuLeft:",VuLeft);
-            telemetry.addData("VuCentre:",VuCentre);
-            telemetry.update();
-
-        */  VuRight = true;
-            VuLogic();
-            com.vuforia.CameraDevice.getInstance().setFlashTorchMode(false);
-            Phone.setPosition(0);
-            GlyphPickUp();
             Jewel();
-            telemetry.addData("Pillars to be passed:",PillarsToBePassed);
-            telemetry.update();
-            Thread.sleep(500);
-            Jewel.setPosition(0.1);
-            Thread.sleep(1000);
-            DriveGyroToRange(0.3);
-            PillarsToBePassed = 1;
-            DriveGyroToRange(-0.1);
-            GyroTurn(-70, 0.2);
-            Drive(400, 0.1);
-            DropGlyph();
-            Drive(-300, 0.3);
             stop();
-
         }
     }
 
@@ -187,9 +89,6 @@ public class AutoOpRed1 extends LinearOpMode
         DriveBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Jewel.setPosition(0);
         Phone.setPosition(0);
-        VuCentre = false;
-        VuRight = false;
-        VuLeft = false;
 
         colorC = hardwareMap.i2cDevice.get("cc");
         color_C_reader = new I2cDeviceSynchImpl(colorC,I2cAddr.create8bit(0x3c),false);
@@ -374,7 +273,7 @@ public class AutoOpRed1 extends LinearOpMode
 
     }
 
-    public void VuLogic(){
+  /*  public void VuLogic(){
         if (VuLeft == true){
             PillarsToBePassed = 3;
             telemetry.addData("Pillars to be passed:","3");
@@ -395,7 +294,7 @@ public class AutoOpRed1 extends LinearOpMode
             telemetry.addData("Error", "%s visible", "Don't know how many pillars to be passed");
         }
     }
-    public void Range() throws InterruptedException {
+    */public void Range() throws InterruptedException {
 
         rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "sensor_range_test");
         while (Pillars != PillarsToBePassed ) {
