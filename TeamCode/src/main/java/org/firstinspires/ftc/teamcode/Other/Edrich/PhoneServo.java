@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Created by Edric on 2018/02/10.
  */
 @Autonomous
-@Disabled
+//@Disabled
 public class PhoneServo extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

@@ -1,25 +1,26 @@
-/*package org.firstinspires.ftc.teamcode.Main;
+package org.firstinspires.ftc.teamcode.Main.Nationals;
 
 
-import com.qualcomm.robotcore.eventloop.opmode.*;
+
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMetaAndClass;
 
-/**
+/*
  * Created by Edrich on 2018/02/27.
  */
-/*
+
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
-@Disabled
+//@Disabled
 public class MainTeleOp extends OpMode {// Declare Motors
     DcMotor DriveFrontLeft;
     DcMotor DriveFrontRight;
     DcMotor DriveBackLeft;
     DcMotor DriveBackRight;
-    DcMotor Glyph;
+   /* DcMotor Glyph;
     DcMotor Arm;
     DcMotor Extending;
     // Declare Servos
@@ -28,7 +29,7 @@ public class MainTeleOp extends OpMode {// Declare Motors
     Servo RightArm;
     Servo LeftArm;
     Servo RelicClaw;
-    // Declare Varuables
+    */// Declare Varuables
     double SpeedControl = 1;
     public double Power;
     double GlyphSpeed = 1;
@@ -65,7 +66,7 @@ public class MainTeleOp extends OpMode {// Declare Motors
         DriveFrontLeft = hardwareMap.dcMotor.get("DriveFrontLeft");
         DriveBackLeft = hardwareMap.dcMotor.get("DriveBackLeft");
         DriveBackRight = hardwareMap.dcMotor.get("DriveBackRight");
-        Glyph = hardwareMap.dcMotor.get("Glyph");
+        /*Glyph = hardwareMap.dcMotor.get("Glyph");
         Arm = hardwareMap.dcMotor.get("Arm");
         Extending = hardwareMap.dcMotor.get("Extending");
         Jewel = hardwareMap.servo.get("ServoArm");
@@ -76,21 +77,21 @@ public class MainTeleOp extends OpMode {// Declare Motors
 // Set the direction of the motors
         Arm.setDirection(DcMotor.Direction.REVERSE);
         Glyph.setDirection(DcMotorSimple.Direction.REVERSE);
-        DriveFrontRight.setDirection(DcMotor.Direction.REVERSE);
+        */DriveFrontRight.setDirection(DcMotor.Direction.REVERSE);
         DriveBackRight.setDirection(DcMotor.Direction.REVERSE);
 // Set the starting speed/power of the motors to 0
         DriveFrontLeft.setPower(0);
         DriveFrontRight.setPower(0);
         DriveBackLeft.setPower(0);
         DriveBackRight.setPower(0);
-        Glyph.setPower(0);
+    /*    Glyph.setPower(0);
         Extending.setPower(0);
 // Set the starting position(angle) of the servo
         Phone.setPosition(0);
         LeftArm.setPosition(0);
         RightArm.setPosition(1);
         Jewel.setPosition(0);
-
+*/
     }
 
 
@@ -252,9 +253,8 @@ public class MainTeleOp extends OpMode {// Declare Motors
     //endregion
 
     //region Driver1_Non-Steering
-
     public void Gamepad1_Controls(){
-
+/*
         if(gamepad1.right_bumper){RightArm.setPosition(0.90);}//right arm closed
         if(gamepad1.right_trigger > 0){RightArm.setPosition(.55);}//right arm open
 
@@ -285,12 +285,12 @@ public class MainTeleOp extends OpMode {// Declare Motors
     public void Gamepad1_Elevator_Controls(){
         ToDoElevatorServo.setPower(gamepad1.left_stick_y);
     }
-
+*/
     //endregion
 
     //region Gamepad2
-
-    public void Gamepad2(){
+/*
+    public void Gamepad2() {
         while (gamepad2.dpad_up)
 
         {
@@ -358,7 +358,7 @@ public class MainTeleOp extends OpMode {// Declare Motors
         Extending.setPower(gamepad2.left_stick_y);
 
         Arm.setPower(gamepad2.right_stick_y * Power);
-
+*/
         if (gamepad2.left_bumper) {
             Power = 0.3;
             telemetry.addData("Power:", Power);
@@ -369,12 +369,13 @@ public class MainTeleOp extends OpMode {// Declare Motors
             telemetry.addData("Power:", Power);
             telemetry.update();
         }
+
         /* Changing speed when picking up the glyph.
    Slower when going down.
    Faster when moving up.
+*/
+     //   if(gamepad1.left_trigger >0){arm.setpower(gamepad1.right_stick_y);}else{arm.setpower(gamepad1.left_trigger);}
 
-        if(gamepad1.left_trigger >0){arm.setpower(gamepad1.right_stick_y);}else{arm.setpower(gamepad1.left_trigger);}
-    */
 
 
         // else
@@ -385,7 +386,7 @@ public class MainTeleOp extends OpMode {// Declare Motors
 
 // Change the speed controll variable  for the drive motor multiplier.
 
-/*
+
         if (gamepad1.back) {
             SpeedControl = 0.4;
         }
@@ -399,7 +400,7 @@ public class MainTeleOp extends OpMode {// Declare Motors
     @Override
     public void loop() {
 
-        Gamepad2();
+     //   Gamepad2();
         Gamepad1_Controls();
 
         if (gamepad1.dpad_left && !gamepad1.dpad_up && !gamepad1.dpad_right){Selected = 0;}else
@@ -407,10 +408,9 @@ public class MainTeleOp extends OpMode {// Declare Motors
         if (!gamepad1.dpad_left && !gamepad1.dpad_up && gamepad1.dpad_right){Selected = 2;}
 
         if      (Selected == 0){Tank_Drive();}
-        else if (Selected == 2){OM_Null();Gamepad1_Elevator_Controls();}
+      //  else if (Selected == 2){OM_Null();Gamepad1_Elevator_Controls();}
         else if (Selected == 3){Omnidirectional_Steering();}
 
     }
 
 }
-*/

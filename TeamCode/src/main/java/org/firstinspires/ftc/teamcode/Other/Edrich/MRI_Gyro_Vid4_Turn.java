@@ -15,7 +15,6 @@ Support is available by emailing support@modernroboticsinc.com.
 */
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -26,15 +25,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name = "4 Turn", group = "Gyro Video")
-@Disabled
+//@Disabled
 public class MRI_Gyro_Vid4_Turn extends LinearOpMode {   //Linear op mode is being used so the program does not get stuck in loop()
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime timer = new ElapsedTime();
 
-    DcMotor DriveFrontLeft;
-    DcMotor DriveFrontRight;
-    DcMotor DriveBackLeft;
-    DcMotor DriveBackRight;
+    DcMotor MLeft;  //Left Drive Motor
+    DcMotor MRight;  //Right Drive Motor
 
     int zAccumulated;  //Total rotation left/right
     int target = 0;  //Desired angle to turn to
@@ -46,29 +43,22 @@ public class MRI_Gyro_Vid4_Turn extends LinearOpMode {   //Linear op mode is bei
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
 
-        DriveFrontRight = hardwareMap.dcMotor.get("DriveFrontRight");
-        DriveFrontLeft = hardwareMap.dcMotor.get("DriveFrontLeft");
-        DriveBackLeft = hardwareMap.dcMotor.get("DriveBackLeft");
-        DriveBackRight = hardwareMap.dcMotor.get("DriveBackRight");
+        MLeft = hardwareMap.dcMotor.get("ml");  //Config File
+        MRight = hardwareMap.dcMotor.get("mr");
+        MRight.setDirection(DcMotor.Direction.REVERSE);  //This robot has two gears between motors and wheels. If your robot does not, you will need to reverse only the opposite motor
 
-        DriveFrontLeft.setDirection(DcMotor.Direction.REVERSE);
-        DriveBackLeft.setDirection(DcMotor.Direction.REVERSE);
-
-        DriveBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);  //Controls the speed of the motors to be consistent even at different battery levels
-        DriveBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        DriveFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        DriveFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        MLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);  //Controls the speed of the motors to be consistent even at different battery levels
+        MRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         sensorGyro = hardwareMap.gyroSensor.get("gyro");  //Point to the gyro in the configuration file
         mrGyro = (ModernRoboticsI2cGyro) sensorGyro;      //ModernRoboticsI2cGyro allows us to .getIntegratedZValue()
         mrGyro.calibrate();  //Calibrate the sensor so it knows where 0 is and what still is. DO NOT MOVE SENSOR WHILE BLUE LIGHT IS SOLID
 
-        while (mrGyro.isCalibrating()) { //Ensure calibration is complete (usually 2 seconds)
-        }
-
         waitForStart();
         runtime.reset();
 
+        while (mrGyro.isCalibrating()) { //Ensure calibration is complete (usually 2 seconds)
+        }
 
         while(opModeIsActive()){
             telemetry.addData("Status", "Running: " + runtime.toString());
@@ -94,17 +84,13 @@ public class MRI_Gyro_Vid4_Turn extends LinearOpMode {   //Linear op mode is bei
 
         while (Math.abs(zAccumulated - target) > 3 && opModeIsActive()) {  //Continue while the robot direction is further than three degrees from the target
             if (zAccumulated > target) {  //if gyro is positive, we will turn right
-                DriveBackLeft.setPower(turnSpeed);
-                DriveFrontLeft.setPower(turnSpeed);
-                DriveFrontRight.setPower(-turnSpeed);
-                DriveBackRight.setPower(-turnSpeed);
+                MLeft.setPower(turnSpeed);
+                MRight.setPower(-turnSpeed);
             }
 
             if (zAccumulated < target) {  //if gyro is positive, we will turn left
-                DriveBackLeft.setPower(-turnSpeed);
-                DriveFrontLeft.setPower(-turnSpeed);
-                DriveFrontRight.setPower(turnSpeed);
-                DriveBackRight.setPower(turnSpeed);
+                MLeft.setPower(-turnSpeed);
+                MRight.setPower(turnSpeed);
             }
 
             zAccumulated = mrGyro.getIntegratedZValue();  //Set variables to gyro readings
@@ -112,10 +98,8 @@ public class MRI_Gyro_Vid4_Turn extends LinearOpMode {   //Linear op mode is bei
             telemetry.update();
         }
 
-        DriveBackLeft.setPower(0);
-        DriveFrontLeft.setPower(0);
-        DriveFrontRight.setPower(0);
-        DriveBackRight.setPower(0);
+        MLeft.setPower(0);  //Stop the motors
+        MRight.setPower(0);
 
     }
 

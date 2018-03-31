@@ -178,6 +178,7 @@ mrGyro.resetZAxisIntegrator();
         LeftArm.setPosition(0.1);
 
         sensorGyro = hardwareMap.gyroSensor.get("gyro");
+
         mrGyro = (ModernRoboticsI2cGyro) sensorGyro;
         mrGyro.calibrate();
         Colour = "None";
