@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
-@Disabled
+//@Disabled
 public class Omnidirectional_Steering extends OpMode {
 
     DcMotor DriveFrontLeft;
