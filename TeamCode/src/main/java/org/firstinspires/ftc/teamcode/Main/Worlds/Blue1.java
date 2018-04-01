@@ -38,6 +38,7 @@ public class Blue1 extends LinearOpMode {
         VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
         VuforiaTrackable relicTemplate = relicTrackables.get(0);
         relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
+
         telemetry.addData(">", "Press Play to start");
         telemetry.update();
         waitForStart();
@@ -48,8 +49,7 @@ public class Blue1 extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-
-
+/*
             com.vuforia.CameraDevice.getInstance().setFlashTorchMode(true);
                 while (VuforiaActive == 1) {
                     robot.Phone.setPosition(1);
@@ -85,11 +85,19 @@ public class Blue1 extends LinearOpMode {
                     }
                 }
             robot.VuforiaLogic("Blue");
-            robot.GlyphPickUp(250);
+*/
+            robot.GlyphPickUp(1000);
             robot.Jewel("Blue");
-            robot.DriveWithRange(10,-0.2,"Blue");
-            robot.GyroTurn(45,0.2);
-
+            robot.PillarsToBePassed = 1;
+            robot.DriveWithDeltaRange(-0.2,"Blue");
+            robot.GyroTurn(-100,0.2);
+            robot.DriveTrain(0.3);
+            Thread.sleep(1000);
+            robot.DriveTrain(0);
+            robot.GlyphDrop(1000);
+            robot.DriveTrain(-0.5);
+            Thread.sleep(500);
+            robot.DriveTrain(0);
 
 
             stop();

@@ -14,7 +14,7 @@ public class Omnidirectional_Steering extends OpMode {
     DcMotor DriveFrontRight;
     DcMotor DriveBackLeft;
     DcMotor DriveBackRight;
-    DcMotor Glyph;
+   /* DcMotor Glyph;
     DcMotor Arm;
     DcMotor Extending;
     Servo Jewel;
@@ -22,7 +22,7 @@ public class Omnidirectional_Steering extends OpMode {
     Servo RightArm;
     Servo LeftArm;
     Servo RelicClaw;
-
+*/
     double GlyphSpeed = 1;
 
     double FR_M = 1;
@@ -58,7 +58,7 @@ public class Omnidirectional_Steering extends OpMode {
         DriveFrontLeft = hardwareMap.dcMotor.get("DriveFrontLeft");
         DriveBackLeft = hardwareMap.dcMotor.get("DriveBackLeft");
         DriveBackRight = hardwareMap.dcMotor.get("DriveBackRight");
-        Glyph = hardwareMap.dcMotor.get("Glyph");
+        /*Glyph = hardwareMap.dcMotor.get("Glyph");
         Arm = hardwareMap.dcMotor.get("Arm");
         Extending = hardwareMap.dcMotor.get("Extending");
         Jewel = hardwareMap.servo.get("ServoArm");
@@ -68,20 +68,20 @@ public class Omnidirectional_Steering extends OpMode {
         RelicClaw = hardwareMap.servo.get("RelicClaw");
         Arm.setDirection(DcMotor.Direction.REVERSE);
         Glyph.setDirection(DcMotorSimple.Direction.REVERSE);
-        DriveFrontRight.setDirection(DcMotor.Direction.REVERSE);
+        */DriveFrontRight.setDirection(DcMotor.Direction.REVERSE);
         DriveBackRight.setDirection(DcMotor.Direction.REVERSE);
         DriveFrontLeft.setPower(0);
         DriveFrontRight.setPower(0);
         DriveBackLeft.setPower(0);
         DriveBackRight.setPower(0);
-        Glyph.setPower(0);
+       /* Glyph.setPower(0);
         Arm.setPower(0);
         Extending.setPower(0);
         Phone.setPosition(1);
         LeftArm.setPosition(0);
         RightArm.setPosition(1);
         Jewel.setPosition(0);
-
+*/
     }
 
 
@@ -188,7 +188,7 @@ public class Omnidirectional_Steering extends OpMode {
         DriveFrontLeft.setPower(FrontLeft);
         DriveBackLeft.setPower(BackLeft);
         DriveBackRight.setPower(BackRight);
-
+/*
         while (gamepad2.dpad_up)
         {
             Glyph.setPower(1*GlyphSpeed);
@@ -240,7 +240,7 @@ public class Omnidirectional_Steering extends OpMode {
         Extending.setPower(gamepad2.left_stick_y);
 
         Arm.setPower(gamepad2.right_stick_y*Power);
-
+*/
         if (gamepad2.back){
             Power = 0.1;
         }

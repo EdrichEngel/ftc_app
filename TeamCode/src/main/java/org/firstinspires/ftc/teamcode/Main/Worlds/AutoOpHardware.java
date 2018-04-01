@@ -59,7 +59,7 @@ public class AutoOpHardware {
 
 
 
-    ModernRoboticsI2cRangeSensor rangeSensor;
+    public ModernRoboticsI2cRangeSensor rangeSensor;
 
 
     HardwareMap hwMap =null;
@@ -90,6 +90,7 @@ public class AutoOpHardware {
         GlyphPickUp = hwMap.get(CRServo.class,"GlyphPickUp");
         sensorGyro = hwMap.get(GyroSensor.class,"gyro");
         colorC = hwMap.get(I2cDevice.class,"cc");
+        rangeSensor =hwMap.get(ModernRoboticsI2cRangeSensor.class, "sensor_range_test");
         DriveBackLeft.setDirection(DcMotor.Direction.REVERSE);
         DriveFrontLeft.setDirection(DcMotor.Direction.REVERSE);
         ExtendLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -105,7 +106,8 @@ public class AutoOpHardware {
         RelicLeftServo.setPosition(0.95);
         RelicRightServo.setPosition(0.07);
         Phone.setPosition(0);
-
+        GlyphRight.setPosition(0.9);
+        GlyphLeft.setPosition(0.1);
         mrGyro = (ModernRoboticsI2cGyro) sensorGyro;
         mrGyro.calibrate();
         Colour = "None";
@@ -142,36 +144,40 @@ public class AutoOpHardware {
     public void Jewel(String Team) throws InterruptedException {
         color_C_reader = new I2cDeviceSynchImpl(colorC,I2cAddr.create8bit(0x3c),false);
         color_C_reader.engage();
-        Jewel.setPosition(0.45);
-        Thread.sleep(500);
+        Jewel.setPosition(0.44);
+        Thread.sleep(2000);
         colorCcache = color_C_reader.read(0x04,1);
         if (colorCcache[0] < 7) {
             Colour = "Blue";
         } else {
             Colour = "Red";
         }
-        if (Colour.matches("Blue")){
+        if (Colour == "Blue"){
             if (Team == "Blue") {
-                GyroTurn(15, 0.1);
-                Thread.sleep(500);
                 GyroTurn(-15, 0.1);
+                Thread.sleep(500);
+                Jewel.setPosition(0);
+                GyroTurn(15, 0.1);
             }
             if (Team == "Red") {
-                GyroTurn(-15, 0.1);
-                Thread.sleep(500);
                 GyroTurn(15, 0.1);
+                Thread.sleep(500);
+                Jewel.setPosition(0);
+                GyroTurn(-15, 0.1);
             }
         }
-        if (Colour.matches("Red")){
+        if (Colour == "Red"){
             if (Team == "Blue") {
-                GyroTurn(-15, 0.1);
-                Thread.sleep(1000);
                 GyroTurn(15, 0.1);
+                Thread.sleep(500);
+                Jewel.setPosition(0);
+                GyroTurn(-15, 0.1);
             }
             if (Team == "Red") {
-                GyroTurn(15, 0.1);
-                Thread.sleep(1000);
                 GyroTurn(-15, 0.1);
+                Thread.sleep(500);
+                Jewel.setPosition(0);
+                GyroTurn(15, 0.1);
             }
         }
 
@@ -214,8 +220,17 @@ public class AutoOpHardware {
     }
     public void GlyphPickUp(int Time) throws InterruptedException {
         GlyphRight.setPosition(0.5);
+        GlyphLeft.setPosition(0.5);
+        Thread.sleep(250);
         GlyphPickUp.setPower(1);
         Thread.sleep(Time);
+        GlyphPickUp.setPower(0);
+    }
+    public void GlyphDrop(int Time) throws InterruptedException {
+        GlyphRight.setPosition(0.9);
+        GlyphLeft.setPosition(0.1);
+        GlyphPickUp.setPower(-1);
+        Thread.sleep(Time-100);
         GlyphPickUp.setPower(0);
     }
     public void DriveWithRange(double Distance,double Speed, String Team) throws InterruptedException {
@@ -227,7 +242,6 @@ public class AutoOpHardware {
         if(Team == "Red"){
             ExtraSpeed = 0.1;
         }
-        rangeSensor =hwMap.get(ModernRoboticsI2cRangeSensor.class, "sensor_range_test");
         double leftSpeed; //Power to feed the motors
         double rightSpeed;
         double target = mrGyro.getIntegratedZValue();  //Starting direction
@@ -245,6 +259,50 @@ public class AutoOpHardware {
             if (rangeSensor.rawUltrasonic() < Distance) {
                 Pillars = Pillars+1 ;
                 Thread.sleep(500);
+            }
+        }
+        DriveFrontLeft.setPower(0);
+        DriveBackLeft.setPower(0);
+        DriveBackRight.setPower(0);
+        DriveFrontRight.setPower(0);
+    }
+    public void DriveWithDeltaRange(double Speed, String Team) throws InterruptedException {
+        Jewel.setPosition(0.1);
+        double ExtraSpeed = 0;
+        double Reading1 = 0;
+        double Reading2 = 0;
+        int k = 0;
+        if(Team == "Blue"){
+            ExtraSpeed = -0.1;
+        }
+        if(Team == "Red"){
+            ExtraSpeed = 0.1;
+        }
+        double leftSpeed; //Power to feed the motors
+        double rightSpeed;
+        double target = mrGyro.getIntegratedZValue();  //Starting direction
+        Pillars = 0;
+        while (Pillars != PillarsToBePassed ) {  //While we have not passed out intended distance
+            zAccumulated = mrGyro.getIntegratedZValue();  //Current direction
+            leftSpeed = Speed + (zAccumulated - target) / 100;  //Calculate speed for each side
+            rightSpeed = (Speed - (zAccumulated - target) / 100)+ExtraSpeed;  //See Gyro Straight video for detailed explanation
+            leftSpeed = Range.clip(leftSpeed, -1, 1);
+            rightSpeed = Range.clip(rightSpeed, -1, 1);
+            DriveFrontLeft.setPower(leftSpeed);
+            DriveBackLeft.setPower(leftSpeed);
+            DriveBackRight.setPower(rightSpeed);
+            DriveFrontRight.setPower(rightSpeed);
+            while (k ==0){
+                Reading1 = rangeSensor.rawUltrasonic();
+                Reading2 = rangeSensor.rawUltrasonic();
+                k = 1;
+            }
+            Reading1 = Reading2;
+            Reading2 = rangeSensor.rawUltrasonic();
+
+            if ((Reading2-Reading1) > 2) {
+                Pillars = Pillars+1 ;
+            //    Thread.sleep(250);
             }
         }
         DriveFrontLeft.setPower(0);
