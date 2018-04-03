@@ -37,7 +37,6 @@ public class TeleOpHardware {
 
     public void init(HardwareMap ahwMap){
         hwMap = ahwMap;
-
         DriveBackLeft =hwMap.get(DcMotor.class, "DriveBackLeft");
         DriveBackRight =hwMap.get(DcMotor.class, "DriveBackRight");
         DriveFrontLeft =hwMap.get(DcMotor.class, "DriveFrontLeft");
@@ -58,13 +57,9 @@ public class TeleOpHardware {
         ExtendLeft.setDirection(DcMotor.Direction.REVERSE);
         ExtendRight.setDirection(DcMotor.Direction.REVERSE);
         GlyphPickUp.setPower(0);
-        RelicLeftServo.setPosition(0.95);
+        RelicLeftServo.setPosition(0.25);
         RelicRightServo.setPosition(0.07);
-        Phone.setPosition(0.35);
+        Phone.setPosition(0);
     }
-
-
-
-
 }
 

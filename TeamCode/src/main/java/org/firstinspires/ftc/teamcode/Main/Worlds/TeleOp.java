@@ -13,7 +13,7 @@ public class TeleOp extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     double DriveSpeed = 1;
-    double RelicSpeed = 0.3;
+    double RelicSpeed = 0.5;
     @Override
     public void runOpMode() throws InterruptedException {
         robot.init(hardwareMap);
@@ -41,7 +41,7 @@ public class TeleOp extends LinearOpMode {
             while (!gamepad2.left_stick_button && !gamepad2.right_stick_button){
                 Driver1();
                 Driver2();
-                robot.ExtendLeft.setPower(gamepad2.right_stick_y);
+                robot.ExtendLeft.setPower(-gamepad2.right_stick_y);
                 robot.ExtendRight.setPower(gamepad2.left_stick_y);
                 robot.RelicRight.setPower(0);
                 robot.RelicLeft.setPower(0);
@@ -103,23 +103,17 @@ public class TeleOp extends LinearOpMode {
     }
     public void Driver2() {
 
-        if (gamepad2.back) {
-            RelicSpeed = 0.1;
-        }
-        if (gamepad2.start) {
-            RelicSpeed = 0.3;
-        }
         if (gamepad2.dpad_left){
-            robot.RelicRightServo.setPosition(0.3);
+            robot.RelicRightServo.setPosition(0.07);
         }
         if (gamepad2.dpad_right){
-            robot.RelicRightServo.setPosition(0);
+            robot.RelicRightServo.setPosition(0.5);
         }
         if (gamepad2.x){
-            robot.RelicLeftServo.setPosition(0.7);
+            robot.RelicLeftServo.setPosition(0);
         }
         if (gamepad2.b){
-            robot.RelicLeftServo.setPosition(1);
+            robot.RelicLeftServo.setPosition(0.25);
         }
     }
 }

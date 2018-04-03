@@ -103,7 +103,7 @@ public class AutoOpHardware {
         color_C_reader = new I2cDeviceSynchImpl(colorC, I2cAddr.create8bit(0x3c),false);
         color_C_reader.engage();
         GlyphPickUp.setPower(0);
-        RelicLeftServo.setPosition(0.95);
+        RelicLeftServo.setPosition(0.25);
         RelicRightServo.setPosition(0.07);
         Phone.setPosition(0);
         GlyphRight.setPosition(0.9);
@@ -310,7 +310,7 @@ public class AutoOpHardware {
         DriveBackRight.setPower(0);
         DriveFrontRight.setPower(0);
     }
-    public void DriveGyro(double Distance, double Speed) {
+    public void DriveForwardGyro(double Distance, double Speed) {
         DriveFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         DriveFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         DriveBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -319,16 +319,59 @@ public class AutoOpHardware {
         DriveFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         DriveBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         DriveBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        double ExtraSpeed = 0.1;
         double leftSpeed;
         double rightSpeed;
-
+        Distance = Math.abs(Distance);
+        Speed = Math.abs(Speed);
         double target = mrGyro.getIntegratedZValue();  //Starting direction
         double startPosition = DriveBackLeft.getCurrentPosition();  //Starting position
         while (DriveBackLeft.getCurrentPosition() < Distance + startPosition) {  //While we have not passed out intended distance
             zAccumulated = mrGyro.getIntegratedZValue();  //Current direction
 
             leftSpeed = Speed + (zAccumulated - target) / 100;  //Calculate speed for each side
-            rightSpeed = Speed - (zAccumulated - target) / 100;  //See Gyro Straight video for detailed explanation
+            rightSpeed = (Speed - (zAccumulated - target) / 100)+ExtraSpeed;  //See Gyro Straight video for detailed explanation
+
+            leftSpeed = Range.clip(leftSpeed, -1, 1);
+            rightSpeed = Range.clip(rightSpeed, -1, 1);
+
+            DriveBackLeft.setPower(leftSpeed);
+            DriveFrontLeft.setPower(leftSpeed);
+            DriveBackRight.setPower(rightSpeed);
+            DriveFrontRight.setPower(rightSpeed);
+
+
+        }
+
+        DriveBackLeft.setPower(0);
+        DriveFrontLeft.setPower(0);
+        DriveBackRight.setPower(0);
+        DriveFrontRight.setPower(0);
+
+    }
+
+    public void DriveBackwardGyro(double Distance, double Speed) {
+        DriveFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        DriveFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        DriveBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        DriveBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        DriveFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        DriveFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        DriveBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        DriveBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        double ExtraSpeed = 0.1;
+        double leftSpeed;
+        double rightSpeed;
+        Speed = Math.abs(Speed);
+        Distance = -Math.abs(Distance);
+        Speed = -Math.abs(Speed);
+        double target = mrGyro.getIntegratedZValue();  //Starting direction
+        double startPosition = DriveBackLeft.getCurrentPosition();  //Starting position
+        while (DriveBackLeft.getCurrentPosition() > Distance + startPosition) {  //While we have not passed out intended distance
+            zAccumulated = mrGyro.getIntegratedZValue();  //Current direction
+
+            leftSpeed = Speed + (zAccumulated - target) / 100;  //Calculate speed for each side
+            rightSpeed = (Speed - (zAccumulated - target) / 100)-ExtraSpeed;  //See Gyro Straight video for detailed explanation
 
             leftSpeed = Range.clip(leftSpeed, -1, 1);
             rightSpeed = Range.clip(rightSpeed, -1, 1);

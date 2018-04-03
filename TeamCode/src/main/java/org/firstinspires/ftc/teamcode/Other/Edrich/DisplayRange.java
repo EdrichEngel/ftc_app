@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Other.Edrich;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchImpl;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.Main.Worlds.TeleOpHardware;
  * Created by Edric on 2018/04/01.
  */
 @Autonomous(name = "DisplayRange", group = "Testing")
+@Disabled
 public class DisplayRange extends LinearOpMode {
     AutoOpHardware robot = new AutoOpHardware();
     @Override
