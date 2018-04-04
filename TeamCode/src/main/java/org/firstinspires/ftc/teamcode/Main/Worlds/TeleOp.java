@@ -22,6 +22,8 @@ public class TeleOp extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
+        }
+
             while (gamepad2.left_stick_button){
                 Driver1();
                 Driver2();
@@ -50,7 +52,7 @@ public class TeleOp extends LinearOpMode {
 
 
 
-    }
+
     public void Driver1() {
         robot.GlyphPickUp.setPower(0);
 
@@ -58,50 +60,54 @@ public class TeleOp extends LinearOpMode {
             robot.GlyphPickUp.setPower(1);
         }
         while (gamepad1.dpad_down) {
-            robot.GlyphPickUp.setPower(-1);
-        }
-        if (gamepad1.back) {
-            DriveSpeed = 0.1;
-        }
-        if (gamepad1.start) {
-            DriveSpeed = 1;
-        }
-        if ((gamepad1.left_bumper && gamepad1.right_bumper) == false) {
-            robot.DriveFrontLeft.setPower((gamepad1.left_stick_y * DriveSpeed));
-            robot.DriveFrontRight.setPower(gamepad1.right_stick_y * DriveSpeed);
-            robot.DriveBackLeft.setPower((gamepad1.left_stick_y * DriveSpeed));
-            robot.DriveBackRight.setPower(gamepad1.right_stick_y * DriveSpeed);
-        }
-        while (gamepad1.left_bumper) {
-            robot.DriveFrontLeft.setPower(1);
-            robot.DriveFrontRight.setPower(-1);
-            robot.DriveBackLeft.setPower(-1);
-            robot.DriveBackRight.setPower(1);
-        }
-        while (gamepad1.right_bumper) {
-            robot.DriveFrontLeft.setPower(-1);
-            robot.DriveFrontRight.setPower(1);
-            robot.DriveBackLeft.setPower(1);
-            robot.DriveBackRight.setPower(-1);
-        }
-        if (gamepad1.x) {
-            robot.GlyphRight.setPosition(0.9);
-            robot.GlyphLeft.setPosition(0.1);
-        }
-        if (gamepad1.b) {
-            robot.GlyphRight.setPosition(0.5);
-            robot.GlyphLeft.setPosition(0.5);
-        }
-        if (gamepad1.a) {
-            robot.GlyphRight.setPosition(0.7);
-            robot.GlyphLeft.setPosition(0.3);
-        }
-        if (gamepad1.y) {
-            robot.GlyphRight.setPosition(0.55);
-            robot.GlyphLeft.setPosition(0.45);
+            robot.GlyphPickUp.setPower(-1);}
+            while (gamepad1.start) {
+                    DriveSpeed = 0.1;
+                }
+               while (gamepad1.back) {
+                   DriveSpeed = 1;
+               }
+
+
+
+            if ((gamepad1.left_bumper && gamepad1.right_bumper) == false) {
+                robot.DriveFrontLeft.setPower((gamepad1.left_stick_y * DriveSpeed));
+                robot.DriveFrontLeft.setPower((gamepad1.left_stick_y * DriveSpeed));
+                robot.DriveFrontRight.setPower(gamepad1.right_stick_y * DriveSpeed);
+                robot.DriveBackLeft.setPower((gamepad1.left_stick_y * DriveSpeed));
+                robot.DriveBackRight.setPower(gamepad1.right_stick_y * DriveSpeed);
+            }
+            while (gamepad1.left_bumper) {
+                robot.DriveFrontLeft.setPower(1);
+                robot.DriveFrontRight.setPower(-1);
+                robot.DriveBackLeft.setPower(-1);
+                robot.DriveBackRight.setPower(1);
+            }
+            while (gamepad1.right_bumper) {
+                robot.DriveFrontLeft.setPower(-1);
+                robot.DriveFrontRight.setPower(1);
+                robot.DriveBackLeft.setPower(1);
+                robot.DriveBackRight.setPower(-1);
+            }
+            if (gamepad1.x) {
+                robot.GlyphRight.setPosition(0.9);
+                robot.GlyphLeft.setPosition(0.1);
+            }
+            if (gamepad1.b) {
+                robot.GlyphRight.setPosition(0.5);
+                robot.GlyphLeft.setPosition(0.5);
+            }
+            if (gamepad1.a) {
+                robot.GlyphRight.setPosition(0.7);
+                robot.GlyphLeft.setPosition(0.3);
+            }
+            if (gamepad1.y) {
+                robot.GlyphRight.setPosition(0.55);
+                robot.GlyphLeft.setPosition(0.45);
+            }
+
         }
 
-    }
     public void Driver2() {
 
         if (gamepad2.dpad_left){
