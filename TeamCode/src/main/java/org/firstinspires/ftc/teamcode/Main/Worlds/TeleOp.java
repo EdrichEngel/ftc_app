@@ -53,6 +53,13 @@ public class TeleOp extends LinearOpMode {
     }
     public void Driver1() {
         robot.GlyphPickUp.setPower(0);
+
+        while (gamepad1.dpad_up) {
+            robot.GlyphPickUp.setPower(1);
+        }
+        while (gamepad1.dpad_down) {
+            robot.GlyphPickUp.setPower(-1);
+        }
         if (gamepad1.back) {
             DriveSpeed = 0.1;
         }
@@ -76,12 +83,6 @@ public class TeleOp extends LinearOpMode {
             robot.DriveFrontRight.setPower(1);
             robot.DriveBackLeft.setPower(1);
             robot.DriveBackRight.setPower(-1);
-        }
-        while (gamepad1.dpad_up) {
-            robot.GlyphPickUp.setPower(1);
-        }
-        while (gamepad1.dpad_down) {
-            robot.GlyphPickUp.setPower(-1);
         }
         if (gamepad1.x) {
             robot.GlyphRight.setPosition(0.9);

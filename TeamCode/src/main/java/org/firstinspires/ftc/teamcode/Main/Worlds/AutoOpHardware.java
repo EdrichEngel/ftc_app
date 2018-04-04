@@ -300,9 +300,8 @@ public class AutoOpHardware {
             Reading1 = Reading2;
             Reading2 = rangeSensor.rawUltrasonic();
 
-            if ((Reading2-Reading1) > 2) {
+            if ((Reading2-Reading1) > 4) {
                 Pillars = Pillars+1 ;
-            //    Thread.sleep(250);
             }
         }
         DriveFrontLeft.setPower(0);

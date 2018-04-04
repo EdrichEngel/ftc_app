@@ -49,7 +49,7 @@ public class Blue1 extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-/*
+
             com.vuforia.CameraDevice.getInstance().setFlashTorchMode(true);
                 while (VuforiaActive == 1) {
                     robot.Phone.setPosition(1);
@@ -85,17 +85,19 @@ public class Blue1 extends LinearOpMode {
                     }
                 }
             robot.VuforiaLogic("Blue");
-*/
-            robot.GlyphPickUp(1000);
+            telemetry.addData("Pillars to be passed:", robot.PillarsToBePassed);
+            telemetry.update();
+            robot.Phone.setPosition(0);
+            robot.GlyphPickUp(500);
             robot.Jewel("Blue");
-            robot.PillarsToBePassed = 1;
             robot.DriveWithDeltaRange(-0.2,"Blue");
-            robot.GyroTurn(-100,0.2);
+            robot.Jewel.setPosition(0);
+            robot.GyroTurn(-105,0.2);
             robot.DriveTrain(0.3);
-            Thread.sleep(1000);
+            Thread.sleep(750);
             robot.DriveTrain(0);
-            robot.GlyphDrop(1000);
-            robot.DriveTrain(-0.5);
+            robot.GlyphDrop(500);
+            robot.DriveTrain(-0.3);
             Thread.sleep(500);
             robot.DriveTrain(0);
 
