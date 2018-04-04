@@ -140,12 +140,19 @@ public class AutoOpHardware {
         }
 
     }
+    public void JewelSelectorDown() throws InterruptedException {
+        Jewel.setPosition(0.4);
+        Thread.sleep(500);
+        Jewel.setPosition(0.43);
+
+
+    }
 
     public void Jewel(String Team) throws InterruptedException {
         color_C_reader = new I2cDeviceSynchImpl(colorC,I2cAddr.create8bit(0x3c),false);
         color_C_reader.engage();
-        Jewel.setPosition(0.44);
-        Thread.sleep(2000);
+        JewelSelectorDown();
+        Thread.sleep(500);
         colorCcache = color_C_reader.read(0x04,1);
         if (colorCcache[0] < 7) {
             Colour = "Blue";
@@ -300,7 +307,7 @@ public class AutoOpHardware {
             Reading1 = Reading2;
             Reading2 = rangeSensor.rawUltrasonic();
 
-            if ((Reading2-Reading1) > 4) {
+            if ((Reading2-Reading1) > 3) {
                 Pillars = Pillars+1 ;
             }
         }
