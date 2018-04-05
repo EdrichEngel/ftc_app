@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.Main.Worlds;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.I2cAddr;
+import com.qualcomm.robotcore.hardware.I2cDeviceSynchImpl;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
@@ -43,6 +45,9 @@ public class Blue2 extends LinearOpMode {
         robot.sensorGyro.resetZAxisIntegrator();
 
         while (opModeIsActive()) {
+            //robot.GlyphPickUp(1000);
+            //robot.Jewel("Blue");
+
 
             com.vuforia.CameraDevice.getInstance().setFlashTorchMode(true);
                 while (VuforiaActive == 1) {
@@ -78,6 +83,8 @@ public class Blue2 extends LinearOpMode {
                         telemetry.update();
                     }
                 }
+            com.vuforia.CameraDevice.getInstance().setFlashTorchMode(false);
+
             robot.VuforiaLogic("Blue");
 
             telemetry.addData("Pillars to be passed:", robot.PillarsToBePassed);
@@ -87,23 +94,19 @@ public class Blue2 extends LinearOpMode {
             robot.Jewel("Blue");
             telemetry.addData("Jewel Colour:",robot.Colour);
             telemetry.update();
-            robot.DriveBackwardGyro(-2000,0.3);
-            robot.turn(-95,0.2);
+            robot.DriveBackwardGyro((-2000-Math.abs(robot.ExtraDistance)),0.3);
+            robot.turn(-95,0.3);
             robot.DriveForwardGyro(500,0.4);
             Thread.sleep(250);
             robot.DriveWithDeltaRange(-0.3,"Blue");
             robot.Jewel.setPosition(0);
-            robot.DriveForwardGyro(100,0.3);
-            robot.GyroTurn(-105,0.3);
-            robot.DriveTrain(0.3);
-            Thread.sleep(1000);
-            robot.DriveTrain(0);
+            robot.DriveForwardGyro(100,0.4);
+            robot.GyroTurn(-105,0.4);
+            robot.DriveTrain(0.4);
             robot.GlyphDrop(500);
-            robot.DriveTrain(-0.3);
+            robot.DriveTrain(0.4);
             Thread.sleep(500);
             robot.DriveTrain(0);
-
-
             stop();
         }
     }

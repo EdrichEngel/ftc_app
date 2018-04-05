@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.I2cDeviceSynchImpl;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
@@ -26,6 +27,8 @@ public class Blue1 extends LinearOpMode {
     public VuforiaLocalizer vuforia;
     double VuforiaActive = 1;
     int zAccumulated;
+
+    double Testing;
     @Override
     public void runOpMode() throws InterruptedException {
         robot.init(hardwareMap);
@@ -49,7 +52,15 @@ public class Blue1 extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            com.vuforia.CameraDevice.getInstance().setFlashTorchMode(true);
+
+            robot.Jewel.setPosition(0.1);
+
+            Testing = (robot.rangeSensor.getDistance(DistanceUnit.CM) / Math.cos(110));
+            telemetry.addData("Die skuins afstand is:", Testing);
+            telemetry.update();
+
+
+  /*          com.vuforia.CameraDevice.getInstance().setFlashTorchMode(true);
                 while (VuforiaActive == 1) {
                     robot.Phone.setPosition(1);
 
@@ -104,7 +115,7 @@ public class Blue1 extends LinearOpMode {
 
 
             stop();
-        }
+*/        }
     }
 }
 

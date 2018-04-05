@@ -56,6 +56,7 @@ public class AutoOpHardware {
     public int DriveToRangeAngle;
     public int FailedAttempts = 0;
     public int zAccumulated;
+    public  double ExtraDistance = 0;
 
 
 
@@ -141,10 +142,23 @@ public class AutoOpHardware {
 
     }
     public void JewelSelectorDown() throws InterruptedException {
-        Jewel.setPosition(0.4);
-        Thread.sleep(500);
-        Jewel.setPosition(0.43);
+        Jewel.setPosition(0.47);
+        Thread.sleep(1000);
 
+    }
+
+    public void DriveUntilMotersDontTurn() {
+
+        while (DriveFrontRight.getPower() > 0.3){
+            DriveBackLeft.setPower(0.4);
+            DriveBackRight.setPower(0.4);
+            DriveFrontRight.setPower(0.4);
+            DriveFrontLeft.setPower(0.4);
+        }
+        DriveBackLeft.setPower(0);
+        DriveBackRight.setPower(0);
+        DriveFrontRight.setPower(0);
+        DriveFrontLeft.setPower(0);
 
     }
 
@@ -154,11 +168,17 @@ public class AutoOpHardware {
         JewelSelectorDown();
         Thread.sleep(500);
         colorCcache = color_C_reader.read(0x04,1);
-        if (colorCcache[0] < 7) {
-            Colour = "Blue";
-        } else {
-            Colour = "Red";
+        while (colorCcache[0] == 0){
+            colorCcache = color_C_reader.read(0x04,1);
+            DriveForwardGyro(10,0.2);
+            ExtraDistance = ExtraDistance + 10;
         }
+            if (colorCcache[0] < 7) {
+                Colour = "Blue";
+            } else {
+                Colour = "Red";
+            }
+
         if (Colour == "Blue"){
             if (Team == "Blue") {
                 GyroTurn(-15, 0.1);
