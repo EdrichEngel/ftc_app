@@ -24,35 +24,35 @@ public class TeleOp extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
-            while (gamepad2.left_stick_button){
-                Driver1();
-                Driver2();
-                robot.RelicRight.setPower(gamepad2.right_stick_y*RelicSpeed);
-                robot.RelicLeft.setPower(0);
-                robot.ExtendRight.setPower(0);
-                robot.ExtendLeft.setPower(0);
+                while (gamepad2.left_stick_button) {
+                    Driver1();
+                    Driver2();
+                    robot.RelicRight.setPower(gamepad2.right_stick_y * RelicSpeed);
+                    robot.RelicLeft.setPower(0);
+                    robot.ExtendRight.setPower(0);
+                    robot.ExtendLeft.setPower(0);
 
-            }
-            while (gamepad2.right_stick_button){
-                Driver1();
-                Driver2();
-                robot.RelicLeft.setPower(gamepad2.left_stick_y*RelicSpeed);
-                robot.RelicRight.setPower(0);
-                robot.ExtendRight.setPower(0);
-                robot.ExtendLeft.setPower(0);
-                            }
-            while (!gamepad2.left_stick_button && !gamepad2.right_stick_button){
-                Driver1();
-                Driver2();
-                robot.ExtendLeft.setPower(-gamepad2.right_stick_y);
-                robot.ExtendRight.setPower(gamepad2.left_stick_y);
-                robot.RelicRight.setPower(0);
-                robot.RelicLeft.setPower(0);
+                }
+                while (gamepad2.right_stick_button) {
+                    Driver1();
+                    Driver2();
+                    robot.RelicLeft.setPower(gamepad2.left_stick_y * RelicSpeed);
+                    robot.RelicRight.setPower(0);
+                    robot.ExtendRight.setPower(0);
+                    robot.ExtendLeft.setPower(0);
+                }
+                while (!gamepad2.left_stick_button && !gamepad2.right_stick_button) {
+                    Driver1();
+                    Driver2();
+                    robot.ExtendLeft.setPower(-gamepad2.right_stick_y);
+                    robot.ExtendRight.setPower(gamepad2.left_stick_y);
+                    robot.RelicRight.setPower(0);
+                    robot.RelicLeft.setPower(0);
                 }
             }
-
-
         }
+
+
 
     public void Driver1() {
         robot.GlyphPickUp.setPower(0);

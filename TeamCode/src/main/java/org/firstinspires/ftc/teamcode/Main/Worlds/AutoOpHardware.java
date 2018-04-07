@@ -179,12 +179,17 @@ public class AutoOpHardware extends LinearOpMode{
         color_C_reader.engage();
         JewelSelectorDown();
         Thread.sleep(500);
+        double EncReading1 = 0;
+        double EncReading2 = 0;
         colorCcache = color_C_reader.read(0x04,1);
         while (colorCcache[0] == 0){
             colorCcache = color_C_reader.read(0x04,1);
-            DriveForwardGyro(10,0.2);
-            ExtraDistance = ExtraDistance + 10;
+            EncReading1 = DriveBackLeft.getCurrentPosition();
+            DriveTrain(0.05);
         }
+        DriveTrain(0);
+        EncReading2 =  DriveBackLeft.getCurrentPosition();;
+        ExtraDistance = Math.abs(EncReading2-EncReading1);
             if (colorCcache[0] < 7) {
                 Colour = "Blue";
             } else {
@@ -266,11 +271,12 @@ public class AutoOpHardware extends LinearOpMode{
         GlyphPickUp.setPower(0);
     }
     public void GlyphDrop(int Time) throws InterruptedException {
-        GlyphRight.setPosition(0.9);
-        GlyphLeft.setPosition(0.1);
         GlyphPickUp.setPower(-1);
         Thread.sleep(Time-100);
         GlyphPickUp.setPower(0);
+        GlyphRight.setPosition(0.9);
+        GlyphLeft.setPosition(0.1);
+
     }
     public void DriveWithRange(double Distance,double Speed, String Team) throws InterruptedException {
         Jewel.setPosition(0.1);

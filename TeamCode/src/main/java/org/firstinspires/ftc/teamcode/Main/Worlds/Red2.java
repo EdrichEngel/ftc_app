@@ -13,16 +13,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  * Created by Edric on 2018/03/31.
  */
 
-@Autonomous(name = "Red1", group = "Red")
-public class Red1 extends LinearOpMode {
+@Autonomous(name = "Red2", group = "Red")
+public class Red2 extends LinearOpMode {
     AutoOpHardware robot = new AutoOpHardware();
     public RelicRecoveryVuMark DecodedMessage;
     public static final String TAG = "Vuforia VuMark Sample";
     public VuforiaLocalizer vuforia;
     double VuforiaActive = 1;
     int zAccumulated;
-
-    double Testing;
     @Override
     public void runOpMode() throws InterruptedException {
         robot.init(hardwareMap);
@@ -45,10 +43,13 @@ public class Red1 extends LinearOpMode {
         robot.sensorGyro.resetZAxisIntegrator();
 
         while (opModeIsActive()) {
+            //robot.GlyphPickUp(1000);
+            //robot.Jewel("Blue");
+
 
             com.vuforia.CameraDevice.getInstance().setFlashTorchMode(true);
                 while (VuforiaActive == 1) {
-                    robot.Phone.setPosition(0.9);
+                    robot.Phone.setPosition(0.95);
 
                     RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
                     if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
@@ -80,30 +81,38 @@ public class Red1 extends LinearOpMode {
                         telemetry.update();
                     }
                 }
+            com.vuforia.CameraDevice.getInstance().setFlashTorchMode(false);
+
             robot.VuforiaLogic("Red");
+
             telemetry.addData("Pillars to be passed:", robot.PillarsToBePassed);
             telemetry.update();
             robot.Phone.setPosition(0);
             robot.GlyphPickUp(1000);
             robot.Jewel("Red");
             telemetry.addData("Jewel Colour:",robot.Colour);
-            telemetry.addData("Distance:",robot.ExtraDistance);
             telemetry.update();
-            robot.DriveForwardGyro(1000,0.3);
-            robot.DriveWithDeltaRange(0.2,"Red");
+            robot.DriveForwardGyro((1800+Math.abs(robot.ExtraDistance)),0.4);
+            robot.turn(97,0.4);
+            robot.DriveBackwardGyro(-500,0.4);
+            Thread.sleep(250);
+            robot.DriveWithDeltaRange(0.3,"Red");
             robot.Jewel.setPosition(0);
-            robot.DriveForwardGyro(100,0.4);
-            robot.GyroTurn(-105,0.4);
+            robot.DriveForwardGyro(200,0.4);
+            robot.GyroTurn(-110,0.4);
             robot.DriveTrain(0.4);
-            Thread.sleep(1000);
+            Thread.sleep(750);
             robot.DriveTrain(-0.1);
             Thread.sleep(250);
             robot.DriveTrain(0);
             robot.GlyphDrop(500);
             robot.DriveTrain(-0.4);
             Thread.sleep(500);
+            robot.DriveTrain(0.4);
+            Thread.sleep(500);
+            robot.DriveTrain(-0.2);
+            Thread.sleep(500);
             robot.DriveTrain(0);
-
 
             stop();
         }
