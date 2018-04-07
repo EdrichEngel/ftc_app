@@ -18,7 +18,7 @@ public class BlueJewel extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()){
             robot.Jewel("Blue");
-            robot.DriveBackwardGyro(3000, 0.3);
+            robot.DriveBackwardGyro(3000+robot.ExtraDistance, 0.3);
             stop();
         }
     }

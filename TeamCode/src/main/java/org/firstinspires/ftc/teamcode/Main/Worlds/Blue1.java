@@ -52,17 +52,9 @@ public class Blue1 extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-
-            robot.Jewel.setPosition(0.1);
-
-            Testing = (robot.rangeSensor.getDistance(DistanceUnit.CM) / Math.cos(110));
-            telemetry.addData("Die skuins afstand is:", Testing);
-            telemetry.update();
-
-
-  /*          com.vuforia.CameraDevice.getInstance().setFlashTorchMode(true);
+            com.vuforia.CameraDevice.getInstance().setFlashTorchMode(true);
                 while (VuforiaActive == 1) {
-                    robot.Phone.setPosition(1);
+                    robot.Phone.setPosition(0.95);
 
                     RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
                     if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
@@ -84,7 +76,7 @@ public class Blue1 extends LinearOpMode {
                         telemetry.addData("VuMark", "not visible");
                         Thread.sleep(250);
                         robot.FailedAttempts = robot.FailedAttempts + 1;
-                        if (robot.FailedAttempts == 8) {
+                        if (robot.FailedAttempts > 7) {
                             com.vuforia.CameraDevice.getInstance().setFlashTorchMode(false);
                             if (robot.FailedAttempts == 16){
                                 VuforiaActive = 0;
@@ -104,18 +96,19 @@ public class Blue1 extends LinearOpMode {
             telemetry.update();
             robot.DriveWithDeltaRange(-0.2,"Blue");
             robot.Jewel.setPosition(0);
-            robot.GyroTurn(-105,0.2);
-            robot.DriveTrain(0.3);
-            Thread.sleep(750);
+            robot.DriveForwardGyro(100,0.4);
+            robot.GyroTurn(-105,0.4);
+            robot.DriveTrain(0.4);
+            Thread.sleep(1000);
             robot.DriveTrain(0);
             robot.GlyphDrop(500);
-            robot.DriveTrain(-0.3);
+            robot.DriveTrain(-0.4);
             Thread.sleep(500);
             robot.DriveTrain(0);
 
 
             stop();
-*/        }
+        }
     }
 }
 

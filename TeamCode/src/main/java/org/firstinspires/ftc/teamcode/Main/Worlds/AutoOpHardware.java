@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Main.Worlds;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -24,7 +25,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * Created by Edrich on 2018/03/31.
  */
 
-public class AutoOpHardware {
+public class AutoOpHardware extends LinearOpMode{
     public DcMotor DriveFrontLeft= null;
     public DcMotor DriveFrontRight= null;
     public DcMotor DriveBackRight= null;
@@ -68,6 +69,11 @@ public class AutoOpHardware {
 
 
     public AutoOpHardware(){
+
+    }
+
+    @Override
+    public void runOpMode() throws InterruptedException {
 
     }
 
@@ -120,11 +126,14 @@ public class AutoOpHardware {
             if (VuCentre == true){
                 PillarsToBePassed = 2;
             }
-            if (VuLeft == true){
+            else if (VuLeft == true){
                 PillarsToBePassed = 1;
             }
-            if (VuRight == true){
+            else if (VuRight == true){
                 PillarsToBePassed = 3;
+            }
+            else{
+                PillarsToBePassed = 1;
             }
         }
         if (Team == "Red"){
@@ -132,10 +141,13 @@ public class AutoOpHardware {
             if (VuCentre == true){
                 PillarsToBePassed = 2;
             }
-            if (VuLeft == true){
+            else if (VuLeft == true){
                 PillarsToBePassed = 3;
             }
-            if (VuRight == true){
+            else if (VuRight == true){
+                PillarsToBePassed = 1;
+            }
+            else{
                 PillarsToBePassed = 1;
             }
         }
@@ -284,7 +296,9 @@ public class AutoOpHardware {
             DriveBackRight.setPower(rightSpeed);
             DriveFrontRight.setPower(rightSpeed);
             if (rangeSensor.rawUltrasonic() < Distance) {
-                Pillars = Pillars+1 ;
+                Pillars = Pillars+1;
+                telemetry.addData("Pillars:", Pillars);
+                telemetry.update();
                 Thread.sleep(500);
             }
         }
