@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Created by Edrich on 2018/03/30.
  */
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
-public class TeleOpMaklik extends LinearOpMode {
+public class TeleOpMaklik1Driver extends LinearOpMode {
 
     TeleOpHardware robot = new TeleOpHardware();
     private ElapsedTime runtime = new ElapsedTime();
@@ -23,6 +23,9 @@ public class TeleOpMaklik extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
 
+            while (gamepad1.right_trigger > 0.5){
+                Driver2Backup();
+            }
 
             Driver1();
             Driver2();
@@ -92,32 +95,20 @@ public class TeleOpMaklik extends LinearOpMode {
         if (gamepad2.start) {
             RelicSpeed = 0.5;
         }
-        double ExtendSpeed = 1;
         robot.ExtendLeft.setPower(0);
         robot.ExtendRight.setPower(0);
-        while (gamepad2.left_bumper){
-            robot.ExtendRight.setPower(ExtendSpeed);
-            robot.ExtendLeft.setPower(-ExtendSpeed);
-
-        }
-        while (gamepad2.right_bumper){
-            robot.ExtendRight.setPower(-ExtendSpeed);
-            robot.ExtendLeft.setPower(ExtendSpeed);
-
-        }
         while(gamepad2.dpad_up){
-            robot.ExtendRight.setPower(-ExtendSpeed);
+            robot.ExtendRight.setPower(-0.4);
         }
         while(gamepad2.dpad_down){
-            robot.ExtendRight.setPower(ExtendSpeed);
+            robot.ExtendRight.setPower(0.4);
         }
         while(gamepad2.y){
-            robot.ExtendLeft.setPower(ExtendSpeed);
+            robot.ExtendLeft.setPower(0.4);
         }
         while(gamepad2.a){
-            robot.ExtendLeft.setPower(-ExtendSpeed);
+            robot.ExtendLeft.setPower(-0.4);
         }
-
         if (gamepad2.dpad_left){
             robot.RelicRightServo.setPosition(0.07);
         }
@@ -129,6 +120,52 @@ public class TeleOpMaklik extends LinearOpMode {
         }
         if (gamepad2.b){
             robot.RelicLeftServo.setPosition(0);
+        }
+    }
+    public void Driver2Backup(){
+        robot.RelicRight.setPower(-gamepad1.right_stick_y* RelicSpeed);
+        robot.RelicLeft.setPower(-gamepad1.left_stick_y* RelicSpeed);
+        if (gamepad1.back) {
+            RelicSpeed = 0.1;
+        }
+        if (gamepad1.start) {
+            RelicSpeed = 0.5;
+        }
+        robot.ExtendLeft.setPower(0);
+        robot.ExtendRight.setPower(0);
+        while(gamepad1.dpad_up){
+            robot.ExtendRight.setPower(-0.4);
+        }
+        while(gamepad1.dpad_down){
+            robot.ExtendRight.setPower(0.4);
+        }
+        while(gamepad1.y){
+            robot.ExtendLeft.setPower(0.4);
+        }
+        while(gamepad1.a){
+            robot.ExtendLeft.setPower(-0.4);
+        }
+        if (gamepad1.dpad_left){
+            robot.RelicRightServo.setPosition(0.07);
+        }
+        if (gamepad1.dpad_right){
+            robot.RelicRightServo.setPosition(0.5);
+        }
+        if (gamepad1.x){
+            robot.RelicLeftServo.setPosition(0);
+        }
+        if (gamepad1.b){
+            robot.RelicLeftServo.setPosition(0.25);
+        }
+    }
+
+
+    public void UpdateState(){
+        if (gamepad1.left_stick_button = true){
+            Driver1RemoteState = true;
+        }
+        if (gamepad1.right_stick_button = true){
+            Driver1RemoteState = false;
         }
     }
 }
