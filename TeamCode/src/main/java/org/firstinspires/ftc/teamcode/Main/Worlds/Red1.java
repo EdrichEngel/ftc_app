@@ -16,13 +16,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 @Autonomous(name = "Red1", group = "Red")
 public class Red1 extends LinearOpMode {
     AutoOpHardware robot = new AutoOpHardware();
-    public RelicRecoveryVuMark DecodedMessage;
-    public static final String TAG = "Vuforia VuMark Sample";
     public VuforiaLocalizer vuforia;
     double VuforiaActive = 1;
-    int zAccumulated;
-
-    double Testing;
     @Override
     public void runOpMode() throws InterruptedException {
         robot.init(hardwareMap);
@@ -45,11 +40,9 @@ public class Red1 extends LinearOpMode {
         robot.sensorGyro.resetZAxisIntegrator();
 
         while (opModeIsActive()) {
-
             com.vuforia.CameraDevice.getInstance().setFlashTorchMode(true);
                 while (VuforiaActive == 1) {
                     robot.Phone.setPosition(0.9);
-
                     RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
                     if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
                         telemetry.addData("VuMark", "%s visible", vuMark);
@@ -80,6 +73,7 @@ public class Red1 extends LinearOpMode {
                         telemetry.update();
                     }
                 }
+            com.vuforia.CameraDevice.getInstance().setFlashTorchMode(false);
             robot.VuforiaLogic("Red");
             telemetry.addData("Pillars to be passed:", robot.PillarsToBePassed);
             telemetry.update();
@@ -92,19 +86,20 @@ public class Red1 extends LinearOpMode {
             robot.DriveForwardGyro(1000,0.3);
             robot.DriveWithDeltaRange(0.2,"Red");
             robot.Jewel.setPosition(0);
-            robot.DriveForwardGyro(100,0.4);
+            robot.DriveForwardGyro(robot.ExtraDropDistance,0.4);
+            robot.GetDriveDistance(-105);
             robot.GyroTurn(-105,0.4);
-            robot.DriveTrain(0.4);
-            Thread.sleep(1000);
+            telemetry.addData("Dist from Pillar:", robot.Reading2);
+            telemetry.addData("DriveDist:", robot.DriveDistance/33.33333333);
+            telemetry.update();
+            robot.DriveForwardGyro(robot.DriveDistance,0.4);
             robot.DriveTrain(-0.1);
-            Thread.sleep(250);
+            Thread.sleep(100);
             robot.DriveTrain(0);
-            robot.GlyphDrop(500);
+            robot.GlyphDrop(900);
             robot.DriveTrain(-0.4);
-            Thread.sleep(500);
+            Thread.sleep(400);
             robot.DriveTrain(0);
-
-
             stop();
         }
     }

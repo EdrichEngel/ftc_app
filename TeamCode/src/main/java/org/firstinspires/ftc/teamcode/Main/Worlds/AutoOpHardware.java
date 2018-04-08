@@ -44,7 +44,7 @@ public class AutoOpHardware extends LinearOpMode{
     public boolean VuLeft;
     public boolean VuCentre;
     public boolean VuRight;
-
+    public double DriveDistance;
     public String Colour;
     public GyroSensor sensorGyro;
     public ModernRoboticsI2cGyro mrGyro;
@@ -53,11 +53,12 @@ public class AutoOpHardware extends LinearOpMode{
     public I2cDeviceSynch color_C_reader;
     public byte[] colorCcache;
     public double Pillars;
-    public double GyroX;
-    public int DriveToRangeAngle;
+    public double ExtraDropDistance = 0;
     public int FailedAttempts = 0;
     public int zAccumulated;
     public  double ExtraDistance = 0;
+    public double Reading1 = 0;
+    public double Reading2 = 0;
 
 
 
@@ -140,21 +141,25 @@ public class AutoOpHardware extends LinearOpMode{
             Phone.setPosition(0.35);
             if (VuCentre == true){
                 PillarsToBePassed = 2;
+                ExtraDropDistance = 100;
             }
             else if (VuLeft == true){
                 PillarsToBePassed = 3;
+                ExtraDropDistance = 100;
             }
             else if (VuRight == true){
                 PillarsToBePassed = 1;
+                ExtraDropDistance = 210;
             }
             else{
                 PillarsToBePassed = 1;
+                ExtraDropDistance = 210;
             }
         }
 
     }
     public void JewelSelectorDown() throws InterruptedException {
-        Jewel.setPosition(0.47);
+        Jewel.setPosition(0.44);
         Thread.sleep(1000);
 
     }
@@ -185,7 +190,7 @@ public class AutoOpHardware extends LinearOpMode{
         while (colorCcache[0] == 0){
             colorCcache = color_C_reader.read(0x04,1);
             EncReading1 = DriveBackLeft.getCurrentPosition();
-            DriveTrain(0.05);
+            DriveTrain(0.04);
         }
         DriveTrain(0);
         EncReading2 =  DriveBackLeft.getCurrentPosition();;
@@ -198,30 +203,30 @@ public class AutoOpHardware extends LinearOpMode{
 
         if (Colour == "Blue"){
             if (Team == "Blue") {
-                GyroTurn(-15, 0.1);
+                GyroTurn(-20, 0.1);
                 Thread.sleep(500);
                 Jewel.setPosition(0);
-                GyroTurn(15, 0.1);
+                GyroTurn(20, 0.1);
             }
             if (Team == "Red") {
-                GyroTurn(15, 0.1);
+                GyroTurn(20, 0.1);
                 Thread.sleep(500);
                 Jewel.setPosition(0);
-                GyroTurn(-15, 0.1);
+                GyroTurn(-20, 0.1);
             }
         }
         if (Colour == "Red"){
             if (Team == "Blue") {
-                GyroTurn(15, 0.1);
+                GyroTurn(20, 0.1);
                 Thread.sleep(500);
                 Jewel.setPosition(0);
-                GyroTurn(-15, 0.1);
+                GyroTurn(-20, 0.1);
             }
             if (Team == "Red") {
-                GyroTurn(-15, 0.1);
+                GyroTurn(-20, 0.1);
                 Thread.sleep(500);
                 Jewel.setPosition(0);
-                GyroTurn(15, 0.1);
+                GyroTurn(20, 0.1);
             }
         }
 
@@ -235,7 +240,7 @@ public class AutoOpHardware extends LinearOpMode{
         mrGyro.resetZAxisIntegrator();
         zAccumulated = 0;
         zAccumulated = mrGyro.getIntegratedZValue();
-        while ((Math.abs(zAccumulated - target) != 0)) {
+        while ((Math.abs(zAccumulated - target) > 2)) {
             if (zAccumulated < target) {
                 DriveFrontLeft.setPower(-TurnSpeed);
                 DriveFrontRight.setPower(TurnSpeed);
@@ -274,6 +279,7 @@ public class AutoOpHardware extends LinearOpMode{
         GlyphPickUp.setPower(-1);
         Thread.sleep(Time-100);
         GlyphPickUp.setPower(0);
+        Thread.sleep(100);
         GlyphRight.setPosition(0.9);
         GlyphLeft.setPosition(0.1);
 
@@ -316,8 +322,6 @@ public class AutoOpHardware extends LinearOpMode{
     public void DriveWithDeltaRange(double Speed, String Team) throws InterruptedException {
         Jewel.setPosition(0.1);
         double ExtraSpeed = 0;
-        double Reading1 = 0;
-        double Reading2 = 0;
         int k = 0;
         if(Team == "Blue"){
             ExtraSpeed = -0.1;
@@ -434,6 +438,12 @@ public class AutoOpHardware extends LinearOpMode{
         DriveFrontLeft.setPower(0);
         DriveBackRight.setPower(0);
         DriveFrontRight.setPower(0);
+
+    }
+    public void GetDriveDistance(double Angle){
+        DriveDistance = 0;
+        Angle = Math.abs(Angle-90);
+        DriveDistance = Math.abs((((Reading2)/Math.cos(Angle))*33.33333333)-500);
 
     }
 }
