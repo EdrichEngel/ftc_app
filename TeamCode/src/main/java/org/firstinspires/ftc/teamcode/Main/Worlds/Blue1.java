@@ -94,19 +94,26 @@ public class Blue1 extends LinearOpMode {
             robot.Jewel("Blue");
             telemetry.addData("Jewel Colour:",robot.Colour);
             telemetry.update();
+            robot.DriveBackwardGyro(-1000,-0.3);
             robot.DriveWithDeltaRange(-0.2,"Blue");
             robot.Jewel.setPosition(0);
             robot.DriveForwardGyro(100,0.4);
+            if (robot.VuLeft = true){
+                robot.Reading2 = robot.Reading2 + 8;
+            }
+            robot.GetDriveDistanceDeg(105);
             robot.GyroTurn(-105,0.4);
-            robot.DriveTrain(0.4);
-            Thread.sleep(1000);
+            telemetry.addData("Dist from Pillar:", robot.Reading2);
+            telemetry.addData("DriveDist:", robot.DriveDistance/33.33333333);
+            telemetry.update();
+            robot.DriveForwardGyro(robot.DriveDistance,0.4);
+            robot.DriveTrain(-0.1);
+            Thread.sleep(100);
             robot.DriveTrain(0);
-            robot.GlyphDrop(500);
+            robot.GlyphDrop(900);
             robot.DriveTrain(-0.4);
-            Thread.sleep(500);
+            Thread.sleep(400);
             robot.DriveTrain(0);
-
-
             stop();
         }
     }

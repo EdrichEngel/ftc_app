@@ -87,7 +87,10 @@ public class Red1 extends LinearOpMode {
             robot.DriveWithDeltaRange(0.2,"Red");
             robot.Jewel.setPosition(0);
             robot.DriveForwardGyro(robot.ExtraDropDistance,0.4);
-            robot.GetDriveDistance(-105);
+            if (robot.VuRight = true){
+                robot.Reading2 = robot.Reading2 + 8;
+            }
+            robot.GetDriveDistanceDeg(105);
             robot.GyroTurn(-105,0.4);
             telemetry.addData("Dist from Pillar:", robot.Reading2);
             telemetry.addData("DriveDist:", robot.DriveDistance/33.33333333);

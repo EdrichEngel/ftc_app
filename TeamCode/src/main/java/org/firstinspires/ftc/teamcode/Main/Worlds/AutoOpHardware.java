@@ -261,6 +261,7 @@ public class AutoOpHardware extends LinearOpMode{
         DriveBackLeft.setPower(0);
         DriveBackRight.setPower(0);
     }
+
     public void DriveTrain(double speed){
         DriveFrontRight.setPower(speed);
         DriveFrontLeft.setPower(speed);
@@ -442,9 +443,41 @@ public class AutoOpHardware extends LinearOpMode{
     }
     public void GetDriveDistance(double Angle){
         DriveDistance = 0;
-        Angle = Math.abs(Angle-90);
+        Angle = Math.abs(Angle)-90;
         DriveDistance = Math.abs((((Reading2)/Math.cos(Angle))*33.33333333)-500);
+    }
+    public void GetDriveDistanceDeg(double Angle){
 
+        DriveDistance = 0;
+        Angle = Math.abs(Angle)-90;
+        Angle = Angle*Math.PI/180;
+        DriveDistance = (((Reading2/Math.cos(Angle))*33.33333333333333333333333333333333))-520;
+    }
+    public void GyroTurnAccurate(int target, double TurnSpeed) {
+        TurnSpeed = Math.abs(TurnSpeed);
+        mrGyro.resetZAxisIntegrator();
+        zAccumulated = 0;
+        zAccumulated = mrGyro.getIntegratedZValue();
+        while ((Math.abs(zAccumulated - target) != 0)) {
+            if (zAccumulated < target) {
+                DriveFrontLeft.setPower(-TurnSpeed);
+                DriveFrontRight.setPower(TurnSpeed);
+                DriveBackLeft.setPower(-TurnSpeed);
+                DriveBackRight.setPower(TurnSpeed);
+            }
+
+            if (zAccumulated > target) {
+                DriveFrontLeft.setPower(TurnSpeed);
+                DriveFrontRight.setPower(-TurnSpeed);
+                DriveBackLeft.setPower(TurnSpeed);
+                DriveBackRight.setPower(-TurnSpeed);
+            }
+            zAccumulated = mrGyro.getIntegratedZValue();
+        }
+        DriveFrontLeft.setPower(0);
+        DriveFrontRight.setPower(0);
+        DriveBackLeft.setPower(0);
+        DriveBackRight.setPower(0);
     }
 }
 
