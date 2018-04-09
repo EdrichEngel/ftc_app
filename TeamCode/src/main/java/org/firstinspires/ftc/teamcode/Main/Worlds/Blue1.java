@@ -106,7 +106,7 @@ public class Blue1 extends LinearOpMode {
             telemetry.addData("Dist from Pillar:", robot.Reading2);
             telemetry.addData("DriveDist:", robot.DriveDistance/33.33333333);
             telemetry.update();
-            robot.DriveForwardGyro(robot.DriveDistance,0.4);
+            robot.DriveForwardGyro(robot.DriveDistance-100,0.4);
             robot.DriveTrain(-0.1);
             Thread.sleep(100);
             robot.DriveTrain(0);
